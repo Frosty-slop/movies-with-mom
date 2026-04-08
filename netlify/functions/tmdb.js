@@ -253,14 +253,17 @@ exports.handler = async (event) => {
       const momSafeMovieRatings = 'G,PG,PG-13';
       const momSafeTvRatings    = 'TV-Y,TV-Y7,TV-G,TV-PG,TV-14';
 
+      // Only use without_genres on TV when no mood is selected (they conflict with with_genres)
+      const tvKidsExclude = mood === 'any' ? '&without_genres=10762,16' : '';
+
       if (range) {
         // Use discover with certification filter for era-filtered results
         movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=' + range.gte + '&primary_release_date.lte=' + range.lte + '&vote_count.gte=50&certification_country=US&certification.lte=PG-13&without_keywords=210024' + movieGenreFilter + movieExcludeFilter;
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16&without_keywords=210024' + tvGenreFilter + tvExcludeFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14' + tvKidsExclude + '&without_keywords=210024' + tvGenreFilter + tvExcludeFilter;
       } else {
         // Default: now playing / on air — use discover so we can filter by rating
         movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2024-01-01&vote_count.gte=50&certification_country=US&certification.lte=PG-13&without_keywords=210024' + movieGenreFilter + movieExcludeFilter;
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16&without_keywords=210024' + tvGenreFilter + tvExcludeFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14' + tvKidsExclude + '&without_keywords=210024' + tvGenreFilter + tvExcludeFilter;
       }
 
       const fetchMovies = type !== 'tv'    ? tmdb(movieEndpoint, KEY) : Promise.resolve({ results: [] });
