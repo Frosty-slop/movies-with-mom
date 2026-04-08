@@ -1,7 +1,7 @@
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Cache-Control': 'no-store, no-cache, must-revalidate',
   'Pragma': 'no-cache',
 };
@@ -10,9 +10,13 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';
 const IMG_BASE  = 'https://image.tmdb.org/t/p';
 
 async function tmdb(path, key) {
-  const res = await fetch(`${TMDB_BASE}${path}${path.includes('?') ? '&' : '?'}api_key=${key}`);
-  if (!res.ok) throw new Error(`TMDB ${res.status}: ${path}`);
-  return res.json();
+  // Build URL carefully - don't encode the dots in param names
+  const separator = path.includes('?') ? '&' : '?';
+  const url = TMDB_BASE + path + separator + 'api_key=' + key;
+  const res = await fetch(url);
+  const text = await res.text();
+  if (!res.ok) throw new Error('TMDB ' + res.status + ': ' + path + ' -> ' + text.slice(0, 200));
+  return JSON.parse(text);
 }
 
 // Map TMDB genre IDs to names
@@ -229,6 +233,7 @@ exports.handler = async (event) => {
         statusCode: 200,
         headers: { ...CORS, 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          debug: { era: era, type: type, hasRange: !!range, movieEndpoint: movieEndpoint },
           movies: (movies.results || []).slice(0, 4).map(i => mapItem(i, 'movie')),
           shows:  (shows.results  || []).slice(0, 4).map(i => mapItem(i, 'tv')),
         }),
