@@ -199,8 +199,8 @@ exports.handler = async (event) => {
         'funny':        '35,10751',
         // Adventure-forward, mom-safe action — Adventure, Fantasy, Animation
         'exciting':     '12,14,16,28',
-        // Gentle Sunday afternoon — Romance, Drama, History (use OR logic with pipe)
-        'cozy':         '10749|18|36|10402',
+        // Gentle Sunday afternoon — Romance OR History OR Music, but exclude Action & Thriller
+        'cozy':         '10749|36|10402',
       };
       const moodTvGenres = {
         // Warm and uplifting — Drama, Romance, Family
@@ -214,6 +214,12 @@ exports.handler = async (event) => {
       };
       const movieGenreFilter = moodMovieGenres[mood] ? '&with_genres=' + moodMovieGenres[mood] : '';
       const tvGenreFilter    = moodTvGenres[mood]    ? '&with_genres=' + moodTvGenres[mood]    : '';
+
+      // For cozy, explicitly exclude Action, Thriller, Horror, Crime, Science Fiction
+      const moodMovieExclude = { 'cozy': '28,53,27,80,878' };
+      const moodTvExclude    = { 'cozy': '10759,80,27,53'  };
+      const movieExcludeFilter = moodMovieExclude[mood] ? '&without_genres=' + moodMovieExclude[mood] : '';
+      const tvExcludeFilter    = moodTvExclude[mood]    ? '&without_genres=' + moodTvExclude[mood]    : '';
 
       // Map era to TMDB date range
       const eraRanges = {
@@ -249,12 +255,12 @@ exports.handler = async (event) => {
 
       if (range) {
         // Use discover with certification filter for era-filtered results
-        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=' + range.gte + '&primary_release_date.lte=' + range.lte + '&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter;
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter;
+        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=' + range.gte + '&primary_release_date.lte=' + range.lte + '&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter + movieExcludeFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter + tvExcludeFilter;
       } else {
         // Default: now playing / on air — use discover so we can filter by rating
-        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2024-01-01&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter;
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter;
+        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2024-01-01&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter + movieExcludeFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter + tvExcludeFilter;
       }
 
       const fetchMovies = type !== 'tv'    ? tmdb(movieEndpoint, KEY) : Promise.resolve({ results: [] });
