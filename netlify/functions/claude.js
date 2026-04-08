@@ -20,9 +20,9 @@ const CORS = {
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers: CORS, body: 'Method not allowed' };
 
-  const ip = event.headers['x-forwarded-for']?.split(',')[0].trim() || 'unknown';
+  const ip = (event.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   if (isRateLimited(ip)) {
     return {
       statusCode: 429,
@@ -40,59 +40,73 @@ exports.handler = async (event) => {
     };
   }
 
+  // Parse body — handle both string and object
   let body;
-  try { body = JSON.parse(event.body); }
-  catch {
+  try {
+    body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+  } catch (e) {
     return {
       statusCode: 400,
       headers: { ...CORS, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Invalid request.' }),
+      body: JSON.stringify({ error: 'Invalid JSON: ' + e.message }),
     };
   }
 
-  // Claude handles two tasks:
-  // "suggest"  — generate a mom-friendly list of titles
-  // "analyze"  — generate Mom Meter + racy warnings for a known title
+  if (!body || typeof body !== 'object') {
+    return {
+      statusCode: 400,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Empty or invalid request body.' }),
+    };
+  }
 
   const task = body.task;
   let prompt;
 
   if (task === 'suggest') {
-    const { typeLabel, moodLabel, eraLabel, custom } = body;
+    const typeLabel = body.typeLabel || 'movies and TV shows';
+    const moodLabel = body.moodLabel || '';
+    const eraLabel  = body.eraLabel  || '';
+    const custom    = body.custom    || '';
     const customNote = custom ? ` Additional preference: "${custom}".` : '';
     prompt = `Suggest 6 ${typeLabel}${moodLabel}${eraLabel} that are perfect to watch with mom — family-friendly, no graphic violence or explicit content.${customNote}
 
 Return ONLY a JSON array of 6 objects:
 - title (string, exact title)
-- year (string, e.g. "2019" or "2020–2023")
+- year (string, e.g. "2019" or "2020-2023")
 - type ("Movie" or "TV Show")
-- why (1–2 warm sentences explaining why it's perfect for mom)
-- tags (array of 2–3 short genre/mood tags)
+- why (1-2 warm sentences explaining why it's perfect for mom)
+- tags (array of 2-3 short genre/mood tags)
 
 Raw JSON only, no markdown.`;
 
   } else if (task === 'analyze') {
-    const { title, synopsis, rating, genre, cast } = body;
-    prompt = `You are a helpful family movie advisor. Analyze "${title}" (${genre || 'unknown genre'}, rated ${rating || 'unrated'}) for watching with mom.
+    const title    = body.title    || 'Unknown';
+    const synopsis = body.synopsis || 'No synopsis available.';
+    const rating   = body.rating   || 'unrated';
+    const genre    = body.genre    || 'unknown genre';
+    const cast     = Array.isArray(body.cast) && body.cast.length ? body.cast.join(', ') : '';
 
-Known details: ${synopsis || 'No synopsis available.'}${cast && cast.length ? ` Starring: ${cast.join(', ')}.` : ''}
+    prompt = `You are a helpful family movie advisor. Analyze "${title}" (${genre}, rated ${rating}) for watching with mom.
+
+Known details: ${synopsis}${cast ? ` Starring: ${cast}.` : ''}
 
 Return ONLY this JSON object:
 {
-  "mom_stars": <1-5 integer, 5 = totally mom-safe>,
-  "mom_verdict": "<witty 1-sentence verdict on watching this with mom>",
+  "mom_stars": 4,
+  "mom_verdict": "witty 1-sentence verdict on watching this with mom",
   "racy_items": [
     {
-      "headline": "<funny catchy short headline about a content concern>",
-      "detail": "<factual 1-2 sentence description of the actual content>",
-      "severity": "<low|medium|high>"
+      "headline": "funny catchy short headline about a content concern",
+      "detail": "factual 1-2 sentence description of the actual content",
+      "severity": "low or medium or high"
     }
   ]
 }
 
 Rules:
 - mom_stars: 5 = G-rated family bliss, 4 = a few mild moments, 3 = some things to note, 2 = mom might squirm, 1 = watch alone first
-- racy_items: 2-5 items. Only include medium or high severity items that are actually notable for a mom audience. If the show is genuinely clean, return an empty array.
+- racy_items: only include medium or high severity items notable for a mom audience. If genuinely clean return empty array.
 - Be witty in headlines but factual in details.
 
 Raw JSON only, no markdown.`;
@@ -101,7 +115,7 @@ Raw JSON only, no markdown.`;
     return {
       statusCode: 400,
       headers: { ...CORS, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Unknown task.' }),
+      body: JSON.stringify({ error: 'Unknown task: ' + task }),
     };
   }
 
@@ -114,18 +128,19 @@ Raw JSON only, no markdown.`;
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: task === 'suggest' ? 1200 : 800,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
 
     const data = await res.json();
+
     if (!res.ok) {
       return {
         statusCode: res.status,
         headers: { ...CORS, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: data?.error?.message || 'AI error.' }),
+        body: JSON.stringify({ error: data && data.error ? data.error.message : 'AI error.' }),
       };
     }
 
