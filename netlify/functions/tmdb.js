@@ -194,23 +194,23 @@ exports.handler = async (event) => {
       //         10751=Family, 36=History, 10762=Kids, 10767=Talk
       const moodMovieGenres = {
         // Uplifting, emotional, feel-good — any of: Family, Drama, Romance, Music
-        'heartwarming': '10751|18|10749|10402',
+        'heartwarming': '10751%7C18%7C10749%7C10402',
         // Light and fun — Comedy or Family
-        'funny':        '35|10751',
+        'funny':        '35%7C10751',
         // Adventure-forward, mom-safe — any of: Adventure, Fantasy, Animation, Action
-        'exciting':     '12|14|16|28',
+        'exciting':     '12%7C14%7C16%7C28',
         // Gentle Sunday afternoon — any of: Romance, History, Music
-        'cozy':         '10749|36|10402',
+        'cozy':         '10749%7C36%7C10402',
       };
       const moodTvGenres = {
         // Warm and uplifting — any of: Drama, Romance, Family
-        'heartwarming': '18|10749|10751',
+        'heartwarming': '18%7C10749%7C10751',
         // Light and fun — Comedy
         'funny':        '35',
         // Engaging but not dark — any of: Action & Adventure, Mystery, Drama
-        'exciting':     '10759|9648|18',
+        'exciting':     '10759%7C9648%7C18',
         // Relaxed and gentle — any of: Romance, Drama, History
-        'cozy':         '10749|18|36',
+        'cozy':         '10749%7C18%7C36',
       };
       const movieGenreFilter = moodMovieGenres[mood] ? '&with_genres=' + moodMovieGenres[mood] : '';
       const tvGenreFilter    = moodTvGenres[mood]    ? '&with_genres=' + moodTvGenres[mood]    : '';
