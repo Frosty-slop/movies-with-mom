@@ -319,11 +319,14 @@
     };
 
     async function tmdbCall(action, params) {
-      var allParams = Object.assign({ action: action }, params || {});
+      var allParams = Object.assign({ action: action, _t: Date.now() }, params || {});
       var qs = Object.keys(allParams).map(function(k) {
         return encodeURIComponent(k) + '=' + encodeURIComponent(allParams[k]);
       }).join('&');
-      var res = await fetch('/.netlify/functions/tmdb?' + qs);
+      var res = await fetch('/.netlify/functions/tmdb?' + qs, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
       if (!res.ok) throw new Error('TMDB error ' + res.status);
       return res.json();
     }
