@@ -335,8 +335,7 @@
       return data.content.map(b => b.text || '').join('');
     }
 
-    let tmdbPosterData = null;
-    let lastFilterKey = '';
+
 
     function makeSkeleton() {
       const c = document.createElement('div');
@@ -361,31 +360,22 @@
     async function buildPosterRows(movieGridId, tvGridId, era, type) {
       era  = era  || 'any';
       type = type || 'both';
-      var filterKey = era + '|' + type + '|' + movieGridId;
       var mGrid = document.getElementById(movieGridId);
       var tGrid = document.getElementById(tvGridId);
       if (!mGrid || !tGrid) return;
 
-      // Skip if same filters already loaded
-      if (filterKey === lastFilterKey && tmdbPosterData) {
-        mGrid.innerHTML = ''; tGrid.innerHTML = '';
-        tmdbPosterData.movies.forEach(function(m) { mGrid.appendChild(buildPosterCard(m)); });
-        tmdbPosterData.shows.forEach(function(s)  { tGrid.appendChild(buildPosterCard(s)); });
-        return;
+      // Show skeletons while loading
+      mGrid.innerHTML = ''; tGrid.innerHTML = '';
+      for (var i = 0; i < 4; i++) {
+        if (type !== 'tv')    mGrid.appendChild(makeSkeleton());
+        if (type !== 'movie') tGrid.appendChild(makeSkeleton());
       }
 
-      mGrid.innerHTML = ''; tGrid.innerHTML = '';
-      for (var i = 0; i < 4; i++) { mGrid.appendChild(makeSkeleton()); tGrid.appendChild(makeSkeleton()); }
       try {
         var data = await tmdbCall('trending', { era: era, type: type });
-        lastFilterKey = filterKey;
-        tmdbPosterData = data;
         mGrid.innerHTML = ''; tGrid.innerHTML = '';
-        data.movies.forEach(function(m) { mGrid.appendChild(buildPosterCard(m)); });
-        data.shows.forEach(function(s)  { tGrid.appendChild(buildPosterCard(s)); });
-        // If type filter hides one row, show a message
-        if (type === 'movie') tGrid.innerHTML = '';
-        if (type === 'tv')    mGrid.innerHTML = '';
+        if (type !== 'tv')    data.movies.forEach(function(m) { mGrid.appendChild(buildPosterCard(m)); });
+        if (type !== 'movie') data.shows.forEach(function(s)  { tGrid.appendChild(buildPosterCard(s)); });
       } catch(e) {
         mGrid.innerHTML = '<div class="error-state" style="grid-column:1/-1">Could not load titles.</div>';
         tGrid.innerHTML = '';
@@ -434,7 +424,6 @@
       function onHomeFilterChange() {
         var era  = document.getElementById('era-select').value;
         var type = document.getElementById('type-select').value;
-        tmdbPosterData = null; lastFilterKey = '';
         buildPosterRows('movie-grid', 'tv-grid', era, type);
       }
       document.getElementById('era-select').addEventListener('change', onHomeFilterChange);
