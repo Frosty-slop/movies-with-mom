@@ -55,10 +55,13 @@ exports.handler = async (event) => {
     };
   }
 
-  const action = event.queryStringParameters?.action;
-  const title  = event.queryStringParameters?.title;
-  const id     = event.queryStringParameters?.id;
-  const media  = event.queryStringParameters?.media || 'movie'; // 'movie' or 'tv'
+  const params = event.queryStringParameters || {};
+  const action = params.action;
+  const title  = params.title;
+  const id     = params.id;
+  const media  = params.media || 'movie';
+  const era    = params.era  || 'any';
+  const type   = params.type || 'both';
 
   try {
     // ── SEARCH: find a title ──
@@ -176,10 +179,6 @@ exports.handler = async (event) => {
 
     // ── BROWSE: filter-aware poster rows ──
     if (action === 'trending') {
-      console.log('queryStringParameters:', JSON.stringify(event.queryStringParameters));
-      const era  = event.queryStringParameters?.era  || 'any';
-      const type = event.queryStringParameters?.type || 'both';
-      console.log('era:', era, 'type:', type);
 
       // Map era to TMDB date range
       const eraRanges = {
