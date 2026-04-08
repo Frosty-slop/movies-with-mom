@@ -68,6 +68,7 @@ exports.handler = async (event) => {
   const media  = params.media || 'movie';
   const era    = params.era  || 'any';
   const type   = params.type || 'both';
+  const mood   = params.mood || 'any';
 
   try {
     // ── SEARCH: find a title ──
@@ -186,6 +187,34 @@ exports.handler = async (event) => {
     // ── BROWSE: filter-aware poster rows ──
     if (action === 'trending') {
 
+      // Map mood to TMDB genre IDs
+      // Movies: 35=Comedy, 18=Drama, 10749=Romance, 28=Action, 12=Adventure,
+      //         10751=Family, 36=History, 14=Fantasy, 10402=Music, 16=Animation
+      // TV:     35=Comedy, 18=Drama, 10749=Romance, 10759=Action&Adventure,
+      //         10751=Family, 36=History, 10762=Kids, 10767=Talk
+      const moodMovieGenres = {
+        // Uplifting, emotional, feel-good — Family, Drama, Romance, Music biopics
+        'heartwarming': '10751,18,10749,10402',
+        // Light and fun — Comedy and Family Comedy
+        'funny':        '35,10751',
+        // Adventure-forward, mom-safe action — Adventure, Fantasy, Animation
+        'exciting':     '12,14,16,28',
+        // Gentle Sunday afternoon — Romance, History, light Drama
+        'cozy':         '10749,36,10402',
+      };
+      const moodTvGenres = {
+        // Warm and uplifting — Drama, Romance, Family
+        'heartwarming': '18,10749,10751',
+        // Light and fun — Comedy
+        'funny':        '35',
+        // Engaging but not dark — Action & Adventure, Mystery
+        'exciting':     '10759,9648',
+        // Relaxed and gentle — Romance, Drama, History
+        'cozy':         '10749,18,36',
+      };
+      const movieGenreFilter = moodMovieGenres[mood] ? '&with_genres=' + moodMovieGenres[mood] : '';
+      const tvGenreFilter    = moodTvGenres[mood]    ? '&with_genres=' + moodTvGenres[mood]    : '';
+
       // Map era to TMDB date range
       const eraRanges = {
         'pre70': { gte: '1900-01-01', lte: '1969-12-31' },
@@ -220,12 +249,12 @@ exports.handler = async (event) => {
 
       if (range) {
         // Use discover with certification filter for era-filtered results
-        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=' + range.gte + '&primary_release_date.lte=' + range.lte + '&vote_count.gte=50&certification_country=US&certification.lte=PG-13';
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16';
+        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=' + range.gte + '&primary_release_date.lte=' + range.lte + '&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=' + range.gte + '&first_air_date.lte=' + range.lte + '&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter;
       } else {
         // Default: now playing / on air — use discover so we can filter by rating
-        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2024-01-01&vote_count.gte=50&certification_country=US&certification.lte=PG-13';
-        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16';
+        movieEndpoint = '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2024-01-01&vote_count.gte=50&certification_country=US&certification.lte=PG-13' + movieGenreFilter;
+        showEndpoint  = '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2024-01-01&vote_count.gte=20&certification_country=US&certification.lte=TV-14&without_genres=10762,16' + tvGenreFilter;
       }
 
       const fetchMovies = type !== 'tv'    ? tmdb(movieEndpoint, KEY) : Promise.resolve({ results: [] });
