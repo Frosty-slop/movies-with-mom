@@ -151,15 +151,18 @@
 
     /* POSTER SECTIONS */
     main {
-      max-width: 1200px;
-      margin: 0 auto;
       padding: 0 120px;
-      border-left: 2px solid var(--ink);
-      border-right: 2px solid var(--ink);
       background: var(--bg);
     }
     @media (max-width: 1400px) { main { padding: 0 40px; } }
     @media (max-width: 900px)  { main { padding: 0 20px; } }
+    .main-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      background: var(--bg);
+    }
 
     .poster-section { width: 100%; border-top: 2px solid var(--ink); }
 
@@ -448,28 +451,30 @@
     </header>
 
     <main>
-      <div class="poster-section">
-        <div class="poster-section-header">
-          <span class="section-title">movies</span>
-          <span class="section-badge">Now in theaters &amp; streaming</span>
-          <div class="section-nav">
-            <button class="nav-btn" onclick="scrollRow('movie-grid', -1)" title="Previous">&#8249;</button>
-            <button class="nav-btn" onclick="scrollRow('movie-grid', 1)" title="Next">&#8250;</button>
+      <div class="main-inner">
+        <div class="poster-section">
+          <div class="poster-section-header">
+            <span class="section-title">movies</span>
+            <span class="section-badge">now in theaters and streaming</span>
+            <div class="section-nav">
+              <button class="nav-btn" onclick="scrollRow('movie-grid', -1)" title="Previous">&#8249;</button>
+              <button class="nav-btn" onclick="scrollRow('movie-grid', 1)" title="Next">&#8250;</button>
+            </div>
           </div>
+          <div class="poster-grid" id="movie-grid"></div>
         </div>
-        <div class="poster-grid" id="movie-grid"></div>
-      </div>
 
-      <div class="poster-section">
-        <div class="poster-section-header">
-          <span class="section-title">tv shows</span>
-          <span class="section-badge">Currently airing</span>
-          <div class="section-nav">
-            <button class="nav-btn" onclick="scrollRow('tv-grid', -1)" title="Previous">&#8249;</button>
-            <button class="nav-btn" onclick="scrollRow('tv-grid', 1)" title="Next">&#8250;</button>
+        <div class="poster-section">
+          <div class="poster-section-header">
+            <span class="section-title">tv shows</span>
+            <span class="section-badge">currently airing</span>
+            <div class="section-nav">
+              <button class="nav-btn" onclick="scrollRow('tv-grid', -1)" title="Previous">&#8249;</button>
+              <button class="nav-btn" onclick="scrollRow('tv-grid', 1)" title="Next">&#8250;</button>
+            </div>
           </div>
+          <div class="poster-grid" id="tv-grid"></div>
         </div>
-        <div class="poster-grid" id="tv-grid"></div>
       </div>
     </main>
 
