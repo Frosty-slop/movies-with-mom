@@ -119,13 +119,19 @@
     }
     select:focus, select:hover { background-color: rgba(91,9,69,0.06); }
 
-    .search-row { display: grid; grid-template-columns: 1fr 114px; align-items: stretch; }
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: stretch;
+      padding: 21px 21px 21px 0;
+      box-sizing: border-box;
+    }
     .search-input {
       font-family: var(--sans);
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.05em;
-      padding: 18px 46px;
+      padding: 0 0 0 46px;
       border: none;
       background: transparent;
       color: var(--ink);
@@ -138,10 +144,11 @@
       font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.05em;
+      width: 114px;
+      height: 60px;
       background: var(--ink);
       color: var(--bg);
       border: none;
-      border-left: 2px solid var(--ink);
       cursor: pointer;
       transition: background 0.15s;
       text-transform: lowercase;
