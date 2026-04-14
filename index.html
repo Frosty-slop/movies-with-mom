@@ -259,7 +259,8 @@
 
     /* RESULTS */
     .results-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem; }
-    .results-section { margin-top: 0.5rem; }
+    .results-section { margin: 0; padding: 0 46px; }
+    .results-section:empty { display: none; }
     .results-heading { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; font-style: italic; color: var(--text2); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
     .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
     .result-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; animation: fadeUp 0.3s ease both; }
@@ -479,12 +480,10 @@
           </div>
           <div class="poster-grid" id="tv-grid"></div>
         </div>
+
+        <div class="results-section" id="results-area"></div>
       </div>
     </main>
-
-    <div class="results-wrapper">
-      <div class="results-section" id="results-area"></div>
-    </div>
 
     <footer>
       <div class="footer-inner">
