@@ -580,13 +580,14 @@
 
     .mom-verdict-card { background: transparent; border: none; border-radius: 0; padding: 0; }
     .verdict-hearts {
-      font-family: var(--sans);
-      font-size: 22px;
-      letter-spacing: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       color: var(--ink);
       line-height: 1;
       margin-bottom: 0;
     }
+    .verdict-hearts .heart { width: 26px; height: 22px; display: block; flex-shrink: 0; color: var(--ink); }
     .verdict-label { display: none; }
     .verdict-text {
       font-family: var(--sans);
@@ -894,6 +895,16 @@
       '2010s':' from 2010 to 2019','2020s':' from 2020 to 2025','new':' released in 2026'
     };
 
+    // ── HEART ICONS (pixel art from Figma) ──
+    var HEART_FULL = '<svg class="heart heart-full" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>';
+    var HEART_EMPTY = '<svg class="heart heart-empty" viewBox="0 0 39 34" xmlns="http://www.w3.org/2000/svg"><path d="M32.6727 5.43779V0.0249023H21.3343V5.43779H16.713V0.0249023H5.37962V5.43779H0.0249023V16.8968H5.37962V22.3097H10.7343V27.7251H16.0269V33.0249H22.0031V27.7251H27.313V22.3097H32.6702V16.8968H38.0249V5.43779H32.6727ZM32.0512 16.2661H26.694V21.6789H21.3368V26.9813H16.7155V21.6789H11.3608V16.2661H6.00607V6.06352H16.0965V11.4789H22.0751V6.06352H32.0562V16.2661H32.0512Z" fill="currentColor"/></svg>';
+    function heartsHTML(stars) {
+      var s = Math.max(0, Math.min(5, stars|0));
+      var html = '';
+      for (var i = 0; i < 5; i++) html += (i < s ? HEART_FULL : HEART_EMPTY);
+      return html;
+    }
+
     // ── CUSTOM SELECT DISPLAY (stacked, center-aligned) ──
     function updateSelectDisplay(selectEl) {
       var wrap = selectEl.closest('.select-wrap');
@@ -1147,7 +1158,7 @@
       var scoresHTML = '';
       scoresHTML += '<div class="score-card"><div class="score-label">TMDB score</div><div class="score-value">'+(d.vote_average ? d.vote_average+'/10' : '—')+'</div></div>';
       scoresHTML += '<div class="rating-card"><div class="score-label">content rating</div><div class="rating-badge">'+(d.rating||'—')+'</div></div>';
-      scoresHTML += '<div class="mom-meter-card"><div class="score-label">mom meter</div><div class="verdict-hearts" id="d-hearts">\u2661\u2661\u2661\u2661\u2661</div></div>';
+      scoresHTML += '<div class="mom-meter-card"><div class="score-label">mom meter</div><div class="verdict-hearts" id="d-hearts">'+heartsHTML(0)+'</div></div>';
       document.getElementById('d-scores').innerHTML = scoresHTML;
 
       var imdbEl = document.getElementById('d-imdb-link');
@@ -1173,7 +1184,7 @@
         streamEl.innerHTML = '<a class="streaming-link" href="https://www.justwatch.com/us/search?q='+encodeURIComponent(d.title)+'" target="_blank" rel="noopener">&#128269; Find on JustWatch</a>';
       }
 
-      document.getElementById('d-hearts').textContent = '\u2661\u2661\u2661\u2661\u2661';
+      document.getElementById('d-hearts').innerHTML = heartsHTML(0);
       document.getElementById('d-verdict').innerHTML = '<span class="verdict-loading">Checking with mom...</span>';
       document.getElementById('d-racy-section').style.display = 'none';
       document.getElementById('detail-loading').classList.add('hidden');
@@ -1183,7 +1194,7 @@
         var raw = await callClaude({ task:'analyze', title:d.title, synopsis:d.synopsis, rating:d.rating, genre:d.genre, cast:d.cast });
         var analysis = JSON.parse(raw.replace(/```json|```/g,'').trim());
         var stars = Math.min(5, Math.max(1, analysis.mom_stars||3));
-        document.getElementById('d-hearts').textContent = '\u2665'.repeat(stars) + '\u2661'.repeat(5-stars);
+        document.getElementById('d-hearts').innerHTML = heartsHTML(stars);
         document.getElementById('d-verdict').textContent = analysis.mom_verdict || '';
         var notable = (analysis.racy_items||[]).filter(function(i){return i.severity==='medium'||i.severity==='high';});
         if (notable.length) {
