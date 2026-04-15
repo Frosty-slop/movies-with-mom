@@ -516,9 +516,8 @@
     @media (max-width: 720px) { .detail-cols { grid-template-columns: 1fr; } }
     .detail-synopsis-col {
       padding: 32px 46px;
-      border-right: 2px solid var(--ink);
     }
-    @media (max-width: 720px) { .detail-synopsis-col { border-right: none; border-bottom: 2px solid var(--ink); } }
+    @media (max-width: 720px) { .detail-synopsis-col { border-bottom: 2px solid var(--ink); } }
     .detail-section-label {
       font-family: var(--sans);
       font-size: 14px;
@@ -545,7 +544,8 @@
       line-height: 1.6;
     }
 
-    .detail-sidebar { display: flex; flex-direction: column; }
+    .detail-sidebar { display: flex; flex-direction: column; border-left: 2px solid var(--ink); }
+    @media (max-width: 720px) { .detail-sidebar { border-left: none; } }
     .sidebar-card {
       padding: 24px 32px;
       background: transparent;
