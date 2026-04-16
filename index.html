@@ -447,31 +447,33 @@
     }
     .detail-meta-sep { color: var(--ink); opacity: 0.5; }
 
-    /* Scores row: 3 equal columns with dividers */
+    /* Scores row: left pair (TMDB + rating) + right (mom meter) */
     .scores-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       margin: 0;
       gap: 0;
     }
-    .scores-row > *:not(:last-child) { border-bottom: 2px solid var(--ink); }
-    .scores-row > * {
+    .scores-left {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--ink);
+    }
+    .scores-left > * {
       padding: 28px 32px;
       background: transparent;
       border: none;
       border-radius: 0;
       display: block;
       min-width: 0;
-      flex: none;
       color: inherit;
       text-decoration: none;
     }
-    .scores-row > * + * { border-left: 2px solid var(--ink); }
-    .scores-row .score-card,
-    .scores-row .rating-card,
+    .scores-left > * + * { border-left: 2px solid var(--ink); }
     .scores-row .mom-meter-card {
+      padding: 28px 32px;
+      border-left: 2px solid var(--ink);
       display: block;
-      align-self: start;
     }
     .score-logo, .score-sub { display: none; }
     .score-label {
@@ -1191,9 +1193,10 @@
         return '<span>'+p+'</span>'+(i<metaParts.length-1?'<span class="detail-meta-sep">·</span>':'');
       }).join('');
 
-      var scoresHTML = '';
+      var scoresHTML = '<div class="scores-left">';
       scoresHTML += '<div class="score-card"><div class="score-label">TMDB score</div><div class="score-value">'+(d.vote_average ? d.vote_average+'/10' : '—')+'</div></div>';
       scoresHTML += '<div class="rating-card"><div class="score-label">content rating</div><div class="rating-badge">'+(d.rating||'—')+'</div></div>';
+      scoresHTML += '</div>';
       scoresHTML += '<div class="mom-meter-card"><div class="score-label">mom meter</div><div class="verdict-hearts" id="d-hearts">'+heartsHTML(0)+'</div></div>';
       document.getElementById('d-scores').innerHTML = scoresHTML;
 
