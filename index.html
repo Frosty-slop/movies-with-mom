@@ -645,7 +645,7 @@
       background: var(--bg);
     }
     .detail-browse-controls .controls-row {
-      grid-template-columns: 1fr 1fr 1fr 2fr;
+      grid-template-columns: auto 1fr 1fr 1fr 2fr;
     }
     .detail-browse-controls .controls-row .search-cell {
       display: grid;
@@ -654,20 +654,17 @@
       padding: 21px 28px 21px 0;
       box-sizing: border-box;
     }
-    .detail-browse-header {
-      max-width: none;
-      margin: 0;
-      padding: 28px 46px;
-      border-bottom: 2px solid var(--ink);
-    }
-    .detail-browse-header .brand-title {
+    .detail-browse-header { display: none; }
+    .keep-browsing-title {
       font-family: var(--serif);
       font-size: 36px;
       font-weight: 400;
+      color: var(--ink);
       line-height: 1;
-      letter-spacing: 0;
-      padding: 0;
-      border-bottom: none;
+      padding: 0 46px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
     }
     .detail-browse-controls {
       max-width: none;
@@ -837,11 +834,9 @@
 
       <!-- Keep browsing -->
       <div class="detail-browse">
-        <div class="detail-browse-header">
-          <div class="brand-title" style="font-size:1.4rem;">Keep browsing</div>
-        </div>
         <div class="detail-browse-controls">
           <div class="controls-row">
+            <div class="keep-browsing-title">keep browsing</div>
             <div class="select-wrap">
               <div class="select-display"></div>
               <select id="d-type-select">
