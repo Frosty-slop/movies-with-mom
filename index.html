@@ -590,6 +590,21 @@
     }
     .streaming-link:hover { transform: translateY(-2px); }
     .streaming-link img { width: 100%; height: 100%; border-radius: 0; object-fit: cover; display: block; }
+    .streaming-link-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 2px solid var(--ink);
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .streaming-link-text:hover { background: var(--ink); color: var(--bg); }
 
     .mom-verdict-card { background: transparent; border: none; border-radius: 0; padding: 0; }
     .verdict-hearts {
@@ -1196,7 +1211,7 @@
           return '<a class="streaming-link" href="'+s.url+'" target="_blank" rel="noopener" title="'+s.name+'" aria-label="'+s.name+'">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'">':s.name)+'</a>';
         }).join('');
       } else {
-        streamEl.innerHTML = '<a class="streaming-link" href="https://www.justwatch.com/us/search?q='+encodeURIComponent(d.title)+'" target="_blank" rel="noopener" title="JustWatch">&#128269;</a>';
+        streamEl.innerHTML = '<a class="streaming-link-text" href="https://www.justwatch.com/us/search?q='+encodeURIComponent(d.title)+'" target="_blank" rel="noopener">&#128269; Find on JustWatch</a>';
       }
 
       document.getElementById('d-hearts').innerHTML = heartsHTML(0);
