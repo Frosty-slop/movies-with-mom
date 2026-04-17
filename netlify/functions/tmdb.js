@@ -276,10 +276,10 @@ exports.handler = async (event) => {
         .slice(0, 8)
         .map(i => mapItem(i, 'movie'));
 
-      // Fetch content ratings for TV shows and filter out confirmed TV-MA
+      const MOM_SAFE_TV_T = ['TV-Y', 'TV-Y7', 'TV-G', 'TV-PG', 'TV-14'];
       const showResults = (shows.results || [])
         .filter(s => s.original_language === 'en' && !(s.genre_ids || []).includes(ANIME_GENRE_T))
-        .slice(0, 20);
+        .slice(0, 40);
       const showRatings = await Promise.all(
         showResults.map(async show => {
           try {
@@ -287,14 +287,12 @@ exports.handler = async (event) => {
             const usRating = (details.results || []).find(r => r.iso_3166_1 === 'US');
             return { show, rating: usRating?.rating || null };
           } catch {
-            return { show, rating: null }; // if rating fetch fails, include the show
+            return { show, rating: null };
           }
         })
       );
-
-      // Only block shows explicitly rated TV-MA — shows with no rating are allowed through
       const safeShows = showRatings
-        .filter(({ rating }) => rating !== 'TV-MA')
+        .filter(({ rating }) => rating && MOM_SAFE_TV_T.includes(rating))
         .slice(0, 8)
         .map(({ show }) => mapItem(show, 'tv'));
 
