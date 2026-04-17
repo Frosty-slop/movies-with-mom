@@ -308,60 +308,199 @@ exports.handler = async (event) => {
       };
     }
 
-    // ── SUGGEST: text-based search with mom-safe filtering ──
+    // ── SUGGEST: multi-source search (title + keyword + genre) ──
     if (action === 'suggest') {
       const query = params.query || '';
+      const ANIM = 16;
 
-      const fetchMovies = type !== 'tv'
-        ? tmdb(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false&language=en-US&page=1`, KEY)
-        : Promise.resolve({ results: [] });
-      const fetchShows = type !== 'movie'
-        ? tmdb(`/search/tv?query=${encodeURIComponent(query)}&include_adult=false&language=en-US&page=1`, KEY)
-        : Promise.resolve({ results: [] });
-
-      let [movies, shows] = await Promise.all([fetchMovies, fetchShows]);
+      // Step 1: Analyze query for implied genres
+      const THEME_GENRES = {
+        'spy':[28,53],'espionage':[28,53],'secret agent':[28,53],'undercover':[28,53],
+        'romance':[10749],'romantic':[10749],'love':[10749],'love story':[10749],
+        'comedy':[35],'funny':[35],'humor':[35],'laugh':[35],
+        'scary':[27],'horror':[27],'creepy':[27],'ghost':[27],'haunted':[27],
+        'action':[28],'fight':[28],'chase':[28],'explosion':[28],
+        'thriller':[53],'suspense':[53],'tense':[53],
+        'war':[10752],'military':[10752],'army':[10752],'soldier':[10752],
+        'space':[878],'alien':[878],'robot':[878],'sci-fi':[878],'sci fi':[878],
+        'fantasy':[14],'magic':[14],'wizard':[14],'dragon':[14],
+        'mystery':[9648],'detective':[9648],'whodunit':[9648],'clue':[9648],
+        'western':[37],'cowboy':[37],
+        'music':[10402],'musical':[10402],'concert':[10402],'sing':[10402],
+        'family':[10751],'kids':[10751],
+        'adventure':[12],'quest':[12],'journey':[12],'treasure':[12],
+        'crime':[80],'heist':[80],'mob':[80],'mafia':[80],'gangster':[80],
+        'history':[36],'historical':[36],'period':[36],
+        'documentary':[99],'doc':[99],
+        'superhero':[28,878],'comic book':[28,878],
+        'pirate':[12,28],'zombie':[27],'vampire':[27,14],
+        'sports':[18],'boxing':[18],'football':[18],'baseball':[18],'soccer':[18],
+      };
+      const qLow = query.toLowerCase();
+      const impliedGenres = new Set();
+      const matchedThemes = [];
+      for (const [term, gids] of Object.entries(THEME_GENRES)) {
+        if (qLow.includes(term)) {
+          gids.forEach(g => impliedGenres.add(g));
+          matchedThemes.push(term);
+        }
+      }
+      const genreArr = [...impliedGenres];
+      const genreParam = genreArr.join('%7C');
+      const themeLabel = matchedThemes.length
+        ? matchedThemes.map(t => t[0].toUpperCase() + t.slice(1)).join(' ')
+        : query;
 
       const range = eraRanges[era];
-      if (range) {
-        const gteYear = parseInt(range.gte.slice(0, 4));
-        const lteYear = parseInt(range.lte.slice(0, 4));
-        movies.results = (movies.results || []).filter(m => {
-          const y = parseInt((m.release_date || '').slice(0, 4));
-          return y >= gteYear && y <= lteYear;
-        });
-        shows.results = (shows.results || []).filter(s => {
-          const y = parseInt((s.first_air_date || '').slice(0, 4));
-          return y >= gteYear && y <= lteYear;
-        });
+      const eraMovieFilter = range
+        ? `&primary_release_date.gte=${range.gte}&primary_release_date.lte=${range.lte}` : '';
+      const eraTvFilter = range
+        ? `&first_air_date.gte=${range.gte}&first_air_date.lte=${range.lte}` : '';
+
+      // Step 2: Parallel TMDB queries
+      const enc = encodeURIComponent(query);
+
+      // a) Literal title search (movies + TV)
+      const pTitleMovies = type !== 'tv'
+        ? tmdb(`/search/movie?query=${enc}&include_adult=false&language=en-US&page=1`, KEY)
+        : Promise.resolve({ results: [] });
+      const pTitleShows = type !== 'movie'
+        ? tmdb(`/search/tv?query=${enc}&include_adult=false&language=en-US&page=1`, KEY)
+        : Promise.resolve({ results: [] });
+
+      // b) Keyword IDs for thematic discover
+      const pKeywords = tmdb(`/search/keyword?query=${enc}&page=1`, KEY);
+
+      // c) Genre-implied discover (movies + TV)
+      const pGenreMovies = genreArr.length > 0 && type !== 'tv'
+        ? tmdb(`/discover/movie?sort_by=popularity.desc&with_genres=${genreParam}&vote_count.gte=100&include_adult=false&language=en-US&certification_country=US&certification.lte=PG-13${eraMovieFilter}`, KEY)
+        : Promise.resolve({ results: [] });
+      const pGenreShows = genreArr.length > 0 && type !== 'movie'
+        ? tmdb(`/discover/tv?sort_by=popularity.desc&with_genres=${genreParam}&vote_count.gte=50&language=en-US${eraTvFilter}`, KEY)
+        : Promise.resolve({ results: [] });
+
+      const [titleMovies, titleShows, kwData, genreMovies, genreShows] =
+        await Promise.all([pTitleMovies, pTitleShows, pKeywords, pGenreMovies, pGenreShows]);
+
+      // Keyword discover (sequential — needs keyword IDs from above)
+      const kwIds = (kwData.results || []).slice(0, 5).map(k => k.id);
+      let kwMovies = { results: [] }, kwShows = { results: [] };
+      if (kwIds.length > 0) {
+        const kwParam = kwIds.join('%7C');
+        const [km, ks] = await Promise.all([
+          type !== 'tv'
+            ? tmdb(`/discover/movie?sort_by=popularity.desc&with_keywords=${kwParam}&vote_count.gte=100&include_adult=false&language=en-US&certification_country=US&certification.lte=PG-13${eraMovieFilter}`, KEY)
+            : Promise.resolve({ results: [] }),
+          type !== 'movie'
+            ? tmdb(`/discover/tv?sort_by=popularity.desc&with_keywords=${kwParam}&vote_count.gte=50&language=en-US${eraTvFilter}`, KEY)
+            : Promise.resolve({ results: [] }),
+        ]);
+        kwMovies = km; kwShows = ks;
       }
 
-      const ANIME_GENRE = 16;
-      const safeMovies = (movies.results || [])
-        .filter(i => !i.adult && i.original_language === 'en' && !(i.genre_ids || []).includes(ANIME_GENRE))
-        .slice(0, 12)
-        .map(i => mapItem(i, 'movie'));
+      // Step 3: Merge, rank, deduplicate
+      function isValid(m) {
+        return !m.adult && m.original_language === 'en' && !(m.genre_ids || []).includes(ANIM);
+      }
+      function eraOk(dateStr) {
+        if (!range) return true;
+        const y = parseInt((dateStr || '').slice(0, 4));
+        return y >= parseInt(range.gte.slice(0, 4)) && y <= parseInt(range.lte.slice(0, 4));
+      }
+      function enrichMovie(m, reason) {
+        return {
+          id: m.id, media_type: 'movie',
+          title: m.title || m.name,
+          year: (m.release_date || '').slice(0, 4),
+          poster: m.poster_path ? `${IMG_BASE}/w342${m.poster_path}` : null,
+          genres: (m.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean),
+          overview: m.overview || '',
+          match_reason: reason,
+          vote_average: m.vote_average?.toFixed(1) || null,
+        };
+      }
+      function enrichShow(s, reason) {
+        return {
+          id: s.id, media_type: 'tv',
+          title: s.name || s.title,
+          year: (s.first_air_date || '').slice(0, 4),
+          poster: s.poster_path ? `${IMG_BASE}/w342${s.poster_path}` : null,
+          genres: (s.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean),
+          overview: s.overview || '',
+          match_reason: reason,
+          vote_average: s.vote_average?.toFixed(1) || null,
+        };
+      }
 
-      const showResults = (shows.results || [])
-        .filter(s => s.original_language === 'en' && !(s.genre_ids || []).includes(ANIME_GENRE))
-        .slice(0, 20);
-      const showRatings = await Promise.all(
-        showResults.map(async show => {
+      // Movies: title first, then keyword thematic, then genre
+      const seenM = new Set();
+      const mergedMovies = [];
+      for (const m of (titleMovies.results || [])) {
+        if (!seenM.has(m.id) && isValid(m) && eraOk(m.release_date)) {
+          seenM.add(m.id);
+          mergedMovies.push(enrichMovie(m, 'Title match'));
+        }
+      }
+      for (const m of (kwMovies.results || [])) {
+        if (!seenM.has(m.id) && isValid(m)) {
+          seenM.add(m.id);
+          mergedMovies.push(enrichMovie(m, themeLabel + ' (thematic)'));
+        }
+      }
+      for (const m of (genreMovies.results || [])) {
+        if (!seenM.has(m.id) && isValid(m)) {
+          seenM.add(m.id);
+          const gNames = genreArr.map(id => GENRE_MAP[id]).filter(Boolean).join(', ');
+          mergedMovies.push(enrichMovie(m, gNames || 'Genre match'));
+        }
+      }
+
+      // TV: same layering
+      const seenT = new Set();
+      const mergedShows = [];
+      for (const s of (titleShows.results || [])) {
+        if (!seenT.has(s.id) && isValid(s) && eraOk(s.first_air_date)) {
+          seenT.add(s.id);
+          mergedShows.push(enrichShow(s, 'Title match'));
+        }
+      }
+      for (const s of (kwShows.results || [])) {
+        if (!seenT.has(s.id) && isValid(s)) {
+          seenT.add(s.id);
+          mergedShows.push(enrichShow(s, themeLabel + ' (thematic)'));
+        }
+      }
+      for (const s of (genreShows.results || [])) {
+        if (!seenT.has(s.id) && isValid(s)) {
+          seenT.add(s.id);
+          const gNames = genreArr.map(id => GENRE_MAP[id]).filter(Boolean).join(', ');
+          mergedShows.push(enrichShow(s, gNames || 'Genre match'));
+        }
+      }
+
+      // TV: filter TV-MA
+      const tvCandidates = mergedShows.slice(0, 20);
+      const tvRatings = await Promise.all(
+        tvCandidates.map(async s => {
           try {
-            const details = await tmdb(`/tv/${show.id}/content_ratings`, KEY);
-            const usRating = (details.results || []).find(r => r.iso_3166_1 === 'US');
-            return { show, rating: usRating?.rating || null };
-          } catch { return { show, rating: null }; }
+            const d = await tmdb(`/tv/${s.id}/content_ratings`, KEY);
+            const us = (d.results || []).find(r => r.iso_3166_1 === 'US');
+            return { s, rating: us?.rating || null };
+          } catch { return { s, rating: null }; }
         })
       );
-      const safeShows = showRatings
+      const safeShows = tvRatings
         .filter(({ rating }) => rating !== 'TV-MA')
         .slice(0, 12)
-        .map(({ show }) => mapItem(show, 'tv'));
+        .map(({ s }) => s);
 
       return {
         statusCode: 200,
         headers: { ...CORS, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ movies: safeMovies, shows: safeShows }),
+        body: JSON.stringify({
+          movies: mergedMovies.slice(0, 12),
+          shows: safeShows,
+        }),
       };
     }
 
