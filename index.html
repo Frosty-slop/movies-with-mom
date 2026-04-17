@@ -692,6 +692,30 @@
       font-family: var(--serif);
       font-weight: 400;
     }
+    .suggest-search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: stretch;
+      border-bottom: 2px solid var(--ink);
+    }
+    .suggest-search-input {
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 18px 28px;
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      outline: none;
+    }
+    .suggest-search-input:focus { background: rgba(91,9,69,0.04); }
+    .suggest-search-input::placeholder { color: var(--ink); opacity: 0.5; }
+    .suggest-search-row .suggest-btn {
+      width: 160px;
+      height: auto;
+      border-left: 2px solid var(--ink);
+    }
 
     /* DETAIL BROWSE SECTION */
     .detail-browse {
@@ -777,7 +801,7 @@
           </div>
           <div class="search-row">
             <input class="search-input" id="custom-input" type="text" placeholder="anything specific?" maxlength="140" />
-            <button class="suggest-btn" id="suggest-btn" onclick="fetchSuggestions()">suggest</button>
+            <button class="suggest-btn" id="suggest-btn" onclick="fetchSuggestions()">mom safe suggestion</button>
           </div>
         </div>
       </div>
@@ -956,6 +980,10 @@
         </nav>
 
         <div class="suggest-context" id="suggest-context"></div>
+        <div class="suggest-search-row">
+          <input class="suggest-search-input" id="suggest-search-input" type="text" placeholder="search for something else..." maxlength="140" />
+          <button class="suggest-btn" onclick="suggestPageSearch()">search</button>
+        </div>
 
         <div class="poster-section">
           <div class="poster-section-header">
@@ -1185,6 +1213,7 @@
     // ── FILTER LISTENERS ──
     document.getElementById('custom-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') fetchSuggestions(); });
     document.getElementById('d-custom-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') fetchSuggestionsDetail(); });
+    document.getElementById('suggest-search-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') suggestPageSearch(); });
 
     function onHomeFilterChange() {
       var era  = document.getElementById('era-select').value;
@@ -1225,6 +1254,12 @@
       showSuggestPage(custom, type, mood, era);
     }
 
+    function suggestPageSearch() {
+      var query = document.getElementById('suggest-search-input').value.trim();
+      if (!query) return;
+      showSuggestPage(query, 'both', 'any', 'any');
+    }
+
     function showSuggestPage(query, type, mood, era) {
       document.getElementById('home-page').classList.add('hidden');
       document.getElementById('detail-page').classList.remove('visible');
@@ -1240,6 +1275,8 @@
       ctx.innerHTML = parts.length
         ? 'showing results for <span class="search-term">' + parts.join(' &middot; ') + '</span>'
         : 'showing popular picks';
+
+      document.getElementById('suggest-search-input').value = query || '';
 
       loadSuggestResults(query, type, mood, era);
 
