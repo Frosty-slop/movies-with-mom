@@ -70,6 +70,26 @@ exports.handler = async (event) => {
   const type   = params.type || 'both';
   const mood   = params.mood || 'any';
 
+  const eraRanges = {
+    'pre70': { gte: '1900-01-01', lte: '1969-12-31' },
+    '70s':   { gte: '1970-01-01', lte: '1979-12-31' },
+    '80s':   { gte: '1980-01-01', lte: '1989-12-31' },
+    '90s':   { gte: '1990-01-01', lte: '1999-12-31' },
+    '2000s': { gte: '2000-01-01', lte: '2009-12-31' },
+    '2010s': { gte: '2010-01-01', lte: '2019-12-31' },
+    '2020s': { gte: '2020-01-01', lte: '2025-12-31' },
+    'new':   { gte: '2026-01-01', lte: '2026-12-31' },
+  };
+
+  const mapItem = (item, mediaType) => ({
+    id: item.id,
+    media_type: mediaType,
+    title: item.title || item.name,
+    year: (item.release_date || item.first_air_date || '').slice(0, 4),
+    poster: item.poster_path ? `${IMG_BASE}/w342${item.poster_path}` : null,
+    vote_average: item.vote_average?.toFixed(1) || null,
+  });
+
   try {
     // ── SEARCH: find a title ──
     if (action === 'search') {
@@ -221,27 +241,6 @@ exports.handler = async (event) => {
       const movieExcludeFilter = moodMovieExclude[mood] ? '&without_genres=' + moodMovieExclude[mood] : '';
       const tvExcludeFilter    = moodTvExclude[mood]    ? '&without_genres=' + moodTvExclude[mood]    : '';
 
-      // Map era to TMDB date range
-      const eraRanges = {
-        'pre70': { gte: '1900-01-01', lte: '1969-12-31' },
-        '70s':   { gte: '1970-01-01', lte: '1979-12-31' },
-        '80s':   { gte: '1980-01-01', lte: '1989-12-31' },
-        '90s':   { gte: '1990-01-01', lte: '1999-12-31' },
-        '2000s': { gte: '2000-01-01', lte: '2009-12-31' },
-        '2010s': { gte: '2010-01-01', lte: '2019-12-31' },
-        '2020s': { gte: '2020-01-01', lte: '2025-12-31' },
-        'new':   { gte: '2026-01-01', lte: '2026-12-31' },
-      };
-
-      const mapItem = (item, mediaType) => ({
-        id: item.id,
-        media_type: mediaType,
-        title: item.title || item.name,
-        year: (item.release_date || item.first_air_date || '').slice(0, 4),
-        poster: item.poster_path ? `${IMG_BASE}/w342${item.poster_path}` : null,
-        vote_average: item.vote_average?.toFixed(1) || null,
-      });
-
       const range = eraRanges[era];
 
       // Build TMDB endpoints based on era and type filters
@@ -303,6 +302,60 @@ exports.handler = async (event) => {
           movies: safeMovies,
           shows:  safeShows,
         }),
+      };
+    }
+
+    // ── SUGGEST: text-based search with mom-safe filtering ──
+    if (action === 'suggest') {
+      const query = params.query || '';
+
+      const fetchMovies = type !== 'tv'
+        ? tmdb(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false&page=1`, KEY)
+        : Promise.resolve({ results: [] });
+      const fetchShows = type !== 'movie'
+        ? tmdb(`/search/tv?query=${encodeURIComponent(query)}&include_adult=false&page=1`, KEY)
+        : Promise.resolve({ results: [] });
+
+      let [movies, shows] = await Promise.all([fetchMovies, fetchShows]);
+
+      const range = eraRanges[era];
+      if (range) {
+        const gteYear = parseInt(range.gte.slice(0, 4));
+        const lteYear = parseInt(range.lte.slice(0, 4));
+        movies.results = (movies.results || []).filter(m => {
+          const y = parseInt((m.release_date || '').slice(0, 4));
+          return y >= gteYear && y <= lteYear;
+        });
+        shows.results = (shows.results || []).filter(s => {
+          const y = parseInt((s.first_air_date || '').slice(0, 4));
+          return y >= gteYear && y <= lteYear;
+        });
+      }
+
+      const safeMovies = (movies.results || [])
+        .filter(i => !i.adult)
+        .slice(0, 12)
+        .map(i => mapItem(i, 'movie'));
+
+      const showResults = (shows.results || []).slice(0, 20);
+      const showRatings = await Promise.all(
+        showResults.map(async show => {
+          try {
+            const details = await tmdb(`/tv/${show.id}/content_ratings`, KEY);
+            const usRating = (details.results || []).find(r => r.iso_3166_1 === 'US');
+            return { show, rating: usRating?.rating || null };
+          } catch { return { show, rating: null }; }
+        })
+      );
+      const safeShows = showRatings
+        .filter(({ rating }) => rating !== 'TV-MA')
+        .slice(0, 12)
+        .map(({ show }) => mapItem(show, 'tv'));
+
+      return {
+        statusCode: 200,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ movies: safeMovies, shows: safeShows }),
       };
     }
 

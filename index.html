@@ -677,6 +677,22 @@
     .racy-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink); }
     .racy-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
 
+    /* ── SUGGEST PAGE ── */
+    #suggest-page { display: none; min-height: 100vh; background: var(--bg); }
+    #suggest-page.visible { display: block; }
+    .suggest-context {
+      padding: 20px 46px;
+      border-bottom: 2px solid var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--ink);
+    }
+    .suggest-context .search-term {
+      font-family: var(--serif);
+      font-weight: 400;
+    }
+
     /* DETAIL BROWSE SECTION */
     .detail-browse {
       border-top: 2px solid var(--ink);
@@ -930,6 +946,105 @@
     </div>
   </div>
 
+  <!-- SUGGEST PAGE -->
+  <div id="suggest-page">
+    <div class="detail-wrap">
+      <div class="detail-inner">
+        <nav class="detail-nav">
+          <button class="back-btn" onclick="goHome()" aria-label="Back"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="detail-nav-title"><span class="serif">Movies</span> with <span class="serif">Mom</span></span>
+        </nav>
+
+        <div class="suggest-context" id="suggest-context"></div>
+
+        <div class="poster-section">
+          <div class="poster-section-header">
+            <span class="section-title">movies</span>
+            <span class="section-badge" id="s-movie-badge">matching your search</span>
+            <div class="section-nav">
+              <button class="nav-btn" onclick="scrollRow('s-movie-grid', -1)" title="Previous"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="nav-btn" onclick="scrollRow('s-movie-grid', 1)" title="Next"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 21.75L11.75 11.75L1.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+          </div>
+          <div class="poster-grid" id="s-movie-grid"></div>
+        </div>
+
+        <div class="poster-section">
+          <div class="poster-section-header">
+            <span class="section-title">tv shows</span>
+            <span class="section-badge" id="s-tv-badge">matching your search</span>
+            <div class="section-nav">
+              <button class="nav-btn" onclick="scrollRow('s-tv-grid', -1)" title="Previous"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="nav-btn" onclick="scrollRow('s-tv-grid', 1)" title="Next"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 21.75L11.75 11.75L1.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+          </div>
+          <div class="poster-grid" id="s-tv-grid"></div>
+        </div>
+
+        <div class="detail-browse" style="margin-top:150px;">
+          <div class="detail-browse-controls">
+            <div class="controls-row">
+              <div class="keep-browsing-title">keep browsing</div>
+              <div class="select-wrap">
+                <div class="select-display"></div>
+                <select id="s-type-select">
+                  <option value="both">all types</option>
+                  <option value="movie">movies</option>
+                  <option value="tv">tv shows</option>
+                </select>
+              </div>
+              <div class="select-wrap">
+                <div class="select-display"></div>
+                <select id="s-mood-select">
+                  <option value="any">mood</option>
+                  <option value="heartwarming">Heartwarming</option>
+                  <option value="funny">Funny</option>
+                  <option value="exciting">Exciting</option>
+                  <option value="cozy">Cozy</option>
+                </select>
+              </div>
+              <div class="select-wrap">
+                <div class="select-display"></div>
+                <select id="s-era-select">
+                  <option value="any">era</option>
+                  <option value="80s">Rad Era (1980s)</option>
+                  <option value="90s">Totally Awesome (1990s)</option>
+                  <option value="2000s">Y2K Vibes (2000s)</option>
+                  <option value="2010s">Peak TV Era (2010-2019)</option>
+                  <option value="2020s">Post-Pandemic Picks (2020-2025)</option>
+                  <option value="new">Hot Off the Press (2026)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="poster-section">
+            <div class="poster-section-header">
+              <span class="section-title">movies</span>
+              <span class="section-badge">now in theaters and streaming</span>
+              <div class="section-nav">
+                <button class="nav-btn" onclick="scrollRow('s-browse-movie-grid', -1)"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="nav-btn" onclick="scrollRow('s-browse-movie-grid', 1)"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 21.75L11.75 11.75L1.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="poster-grid" id="s-browse-movie-grid"></div>
+          </div>
+          <div class="poster-section">
+            <div class="poster-section-header">
+              <span class="section-title">tv shows</span>
+              <span class="section-badge">currently airing</span>
+              <div class="section-nav">
+                <button class="nav-btn" onclick="scrollRow('s-browse-tv-grid', -1)"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="nav-btn" onclick="scrollRow('s-browse-tv-grid', 1)"><svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.75 21.75L11.75 11.75L1.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="poster-grid" id="s-browse-tv-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const eraLabels = {
       'any':'','pre70':' from before 1970','70s':' from the 1970s',
@@ -1091,37 +1206,82 @@
     document.getElementById('d-type-select').addEventListener('change', onDetailFilterChange);
     document.getElementById('d-mood-select').addEventListener('change', onDetailFilterChange);
 
+    function onSuggestBrowseFilterChange() {
+      var era  = document.getElementById('s-era-select').value;
+      var type = document.getElementById('s-type-select').value;
+      var mood = document.getElementById('s-mood-select').value;
+      buildPosterRows('s-browse-movie-grid', 's-browse-tv-grid', era, type, mood);
+    }
+    document.getElementById('s-era-select').addEventListener('change', onSuggestBrowseFilterChange);
+    document.getElementById('s-type-select').addEventListener('change', onSuggestBrowseFilterChange);
+    document.getElementById('s-mood-select').addEventListener('change', onSuggestBrowseFilterChange);
+
     // ── HOME SUGGESTIONS ──
-    async function fetchSuggestions() {
-      var btn  = document.getElementById('suggest-btn');
-      var area = document.getElementById('results-area');
+    function fetchSuggestions() {
       var type   = document.getElementById('type-select').value;
       var mood   = document.getElementById('mood-select').value;
       var era    = document.getElementById('era-select').value;
       var custom = document.getElementById('custom-input').value.trim();
-      btn.disabled = true;
-      area.innerHTML = '<div class="loading-state"><div class="spinner"></div><span>Finding perfect picks for movie night...</span></div>';
-      var typeLabel = type === 'both' ? 'movies and TV shows' : type === 'movie' ? 'movies' : 'TV shows';
-      var moodLabel = mood === 'any' ? '' : ' that are ' + mood;
-      var eraLabel  = eraLabels[era] || '';
-      try {
-        var raw = await callClaude({ task: 'suggest', typeLabel: typeLabel, moodLabel: moodLabel, eraLabel: eraLabel, custom: custom });
-        var suggestions = JSON.parse(raw.replace(/```json|```/g,'').trim());
-        if (!Array.isArray(suggestions) || !suggestions.length) throw new Error('No results');
-        area.innerHTML = '<p class="results-heading">Your picks for tonight</p><div class="results-grid" id="results-grid"></div>';
-        var grid = document.getElementById('results-grid');
-        suggestions.forEach(function(s,i) {
-          var card = document.createElement('div');
-          card.className = 'result-card';
-          card.style.animationDelay = (i*0.07)+'s';
-          card.innerHTML = '<div class="result-type">'+(s.type||'Film')+'</div><div class="result-title">'+s.title+'</div><div class="result-year">'+s.year+'</div><div class="result-why">'+s.why+'</div><div class="result-tags">'+(s.tags||[]).map(function(t){return'<span class="tag">'+t+'</span>';}).join('')+'</div><div class="result-click-hint">Tap for full details &#8594;</div>';
-          card.addEventListener('click', function() { openDetailByTitle(s.title); });
-          grid.appendChild(card);
-        });
-      } catch(err) {
-        area.innerHTML = '<div class="error-state">Something went wrong: '+err.message+'</div>';
+      showSuggestPage(custom, type, mood, era);
+    }
+
+    function showSuggestPage(query, type, mood, era) {
+      document.getElementById('home-page').classList.add('hidden');
+      document.getElementById('detail-page').classList.remove('visible');
+      document.getElementById('suggest-page').classList.add('visible');
+      window.scrollTo(0, 0);
+
+      var ctx = document.getElementById('suggest-context');
+      var parts = [];
+      if (query) parts.push('\u201c' + query + '\u201d');
+      if (type !== 'both') parts.push(type === 'movie' ? 'movies' : 'TV shows');
+      if (mood !== 'any') parts.push(mood);
+      if (era !== 'any') parts.push((eraLabels[era] || '').trim());
+      ctx.innerHTML = parts.length
+        ? 'showing results for <span class="search-term">' + parts.join(' &middot; ') + '</span>'
+        : 'showing popular picks';
+
+      loadSuggestResults(query, type, mood, era);
+
+      if (!document.getElementById('s-browse-movie-grid').dataset.built) {
+        document.getElementById('s-browse-movie-grid').dataset.built = '1';
+        buildPosterRows('s-browse-movie-grid', 's-browse-tv-grid', 'any', 'both', 'any');
       }
-      if (btn) btn.disabled = false;
+    }
+
+    async function loadSuggestResults(query, type, mood, era) {
+      var mGrid = document.getElementById('s-movie-grid');
+      var tGrid = document.getElementById('s-tv-grid');
+      mGrid.innerHTML = ''; tGrid.innerHTML = '';
+      for (var i = 0; i < 6; i++) {
+        if (type !== 'tv')    mGrid.appendChild(buildSkeletonCard());
+        if (type !== 'movie') tGrid.appendChild(buildSkeletonCard());
+      }
+      try {
+        var data;
+        if (query) {
+          data = await tmdbCall('suggest', { query: query, type: type, era: era, mood: mood });
+        } else {
+          data = await tmdbCall('trending', { type: type, era: era, mood: mood });
+        }
+        mGrid.innerHTML = ''; tGrid.innerHTML = '';
+        if (type !== 'tv')    data.movies.forEach(function(m) { mGrid.appendChild(buildPosterCard(m)); });
+        if (type !== 'movie') data.shows.forEach(function(s)  { tGrid.appendChild(buildPosterCard(s)); });
+        if (type !== 'tv' && data.movies.length === 0)
+          mGrid.innerHTML = '<div class="empty-state">No movies found.</div>';
+        if (type !== 'movie' && data.shows.length === 0)
+          tGrid.innerHTML = '<div class="empty-state">No TV shows found.</div>';
+      } catch(e) {
+        mGrid.innerHTML = '<div class="error-state">Could not load results.</div>';
+        tGrid.innerHTML = '';
+      }
+    }
+
+    function buildSkeletonCard() {
+      var card = document.createElement('div');
+      card.className = 'poster-card';
+      card.innerHTML = '<div class="poster-face"><div class="poster-skeleton"></div></div>';
+      return card;
     }
 
     // ── DETAIL SUGGESTIONS ──
@@ -1161,6 +1321,7 @@
     // ── NAVIGATION ──
     function goHome() {
       document.getElementById('detail-page').classList.remove('visible');
+      document.getElementById('suggest-page').classList.remove('visible');
       document.getElementById('home-page').classList.remove('hidden');
       window.scrollTo(0,0);
     }
@@ -1184,6 +1345,7 @@
 
     function showDetailLoading(title) {
       document.getElementById('home-page').classList.add('hidden');
+      document.getElementById('suggest-page').classList.remove('visible');
       document.getElementById('detail-page').classList.add('visible');
       document.getElementById('detail-loading').classList.remove('hidden');
       document.getElementById('detail-content').classList.remove('visible');
