@@ -410,8 +410,9 @@
       padding-bottom: 56.25%;
       border-bottom: 2px solid var(--ink);
     }
+    .detail-trailer.no-trailer { background: #5B0945; }
     .detail-trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-    .trailer-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(91,9,69,0.45); font-size: 14px; }
+    .trailer-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #FFE2E4; font-size: 14px; }
     .trailer-placeholder .play-icon { font-size: 52px; }
 
     .detail-body { max-width: none; margin: 0; padding: 0; }
@@ -1401,8 +1402,10 @@
     async function renderDetail(d) {
       var trailerEl = document.getElementById('detail-trailer');
       if (d.trailer_id) {
+        trailerEl.classList.remove('no-trailer');
         trailerEl.innerHTML = '<iframe src="https://www.youtube.com/embed/'+d.trailer_id+'?rel=0" title="'+d.title+' Official Trailer" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
       } else {
+        trailerEl.classList.add('no-trailer');
         trailerEl.innerHTML = '<div class="trailer-placeholder"><div class="play-icon">&#9654;</div><div>Trailer not available</div></div>';
       }
 
