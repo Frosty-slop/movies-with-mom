@@ -839,7 +839,7 @@
       .scores-left > * { padding: 20px; }
       .scores-row .mom-meter-card { border-left: none; padding: 20px; }
 
-      /* Content: stack — synopsis first, then verdict + streaming */
+      /* Content: mom meter, verdict, synopsis, where to watch */
       .detail-cols {
         display: flex;
         flex-direction: column;
@@ -848,14 +848,16 @@
       .detail-synopsis-col {
         width: 100%;
         padding: 20px;
-        order: 1;
+        order: 2;
+        border-top: 2px solid var(--ink);
       }
       .detail-sidebar {
         position: static !important;
         width: 100% !important;
         border-left: none !important;
-        order: 2;
       }
+      .detail-sidebar .sidebar-card:first-child { order: 1; }
+      .detail-sidebar .sidebar-card:last-child { order: 3; border-top: 2px solid var(--ink); }
       .sidebar-card { padding: 20px; }
       .verdict-hearts .heart { width: 40px; height: 34px; }
 
