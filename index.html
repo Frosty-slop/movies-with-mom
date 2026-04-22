@@ -772,10 +772,10 @@
         padding: 20px 20px;
         gap: 16px;
       }
-      .brand-title { font-size: 48px; }
+      .brand-title { font-size: 48px; padding: 0; border-bottom: none; }
       .brand-tagline { font-size: 14px; padding: 0; }
 
-      /* Controls: stack dropdowns vertically */
+      /* Controls: stack dropdowns, search on same row */
       .header-controls {
         grid-column: 1;
         grid-row: 2;
@@ -789,9 +789,9 @@
       .select-wrap { min-height: 60px; }
       .select-display { min-height: 60px; padding: 0 40px 0 20px; }
       .search-row {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr auto !important;
       }
-      .suggest-btn { border-left: none; border-top: 2px solid var(--ink); padding: 16px 20px; }
+      .suggest-btn { border-left: 2px solid var(--ink); border-top: none; padding: 16px 20px; }
 
       /* Keep browsing row: stack title + dropdowns */
       .keep-browsing-title { padding: 16px 20px; border-bottom: 2px solid var(--ink); }
@@ -799,7 +799,8 @@
         grid-template-columns: 1fr !important;
       }
 
-      /* Poster sections */
+      /* Poster sections: hide carousel arrows */
+      .section-nav { display: none; }
       .poster-section-header {
         height: auto;
         padding: 16px 20px;
@@ -810,8 +811,6 @@
       .poster-section-header .section-badge { margin-bottom: 0; }
       .section-title { font-size: 28px; }
       .section-badge { font-size: 12px; padding: 2px 14px; }
-      .nav-btn { width: 44px; height: 44px; }
-      .nav-btn svg { width: 8px; height: 16px; }
 
       /* Poster grid: 2-up with wrapping */
       .poster-grid {
