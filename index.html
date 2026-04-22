@@ -839,7 +839,7 @@
       .scores-left > * { padding: 20px; }
       .scores-row .mom-meter-card { border-left: none; padding: 20px; }
 
-      /* Content: stack and reorder — verdict, then synopsis, then streaming */
+      /* Content: stack — synopsis first, then verdict + streaming */
       .detail-cols {
         display: flex;
         flex-direction: column;
@@ -848,13 +848,13 @@
       .detail-synopsis-col {
         width: 100%;
         padding: 20px;
-        order: 2;
+        order: 1;
       }
       .detail-sidebar {
         position: static !important;
         width: 100% !important;
         border-left: none !important;
-        order: 1;
+        order: 2;
       }
       .sidebar-card { padding: 20px; }
       .verdict-hearts .heart { width: 40px; height: 34px; }
