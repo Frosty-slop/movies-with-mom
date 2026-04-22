@@ -761,7 +761,7 @@
         grid-template-rows: auto auto;
         border-right: none;
         border-bottom: 2px solid var(--ink);
-        padding: 20px 20px;
+        padding: 20px;
         gap: 16px;
       }
       .brand-title { font-size: 48px; padding: 0; border-bottom: none; }
@@ -786,10 +786,15 @@
       .suggest-btn { border-left: 2px solid var(--ink); border-top: none; padding: 16px 20px; }
 
       /* Keep browsing row: stack title + dropdowns */
-      .keep-browsing-title { padding: 16px 20px; border-bottom: 2px solid var(--ink); }
+      .keep-browsing-title {
+        font-size: 28px;
+        padding: 16px 20px;
+        border-bottom: none;
+      }
       .detail-browse-controls .controls-row {
         grid-template-columns: 1fr !important;
       }
+      .detail-browse { border-top: 2px solid var(--ink); }
 
       /* Poster sections: hide carousel arrows */
       .section-nav { display: none; }
@@ -820,7 +825,7 @@
       .footer-inner { padding: 16px 20px; font-size: 12px; }
 
       /* Detail page */
-      .detail-nav { padding: 12px; gap: 12px; }
+      .detail-nav { padding: 12px 20px; gap: 12px; }
       .back-btn { width: 44px; height: 44px; }
       .detail-nav-title { font-size: 20px; padding-left: 8px; }
       .detail-info { padding: 24px 20px; }
@@ -828,10 +833,11 @@
       .detail-tagline { font-size: 14px; }
       .detail-meta { font-size: 12px; }
 
-      /* Scores: stack vertically */
+      /* Scores: stack vertically, remove double borders */
       .scores-row { grid-template-columns: 1fr !important; }
-      .scores-left { grid-template-columns: 1fr 1fr; border-bottom: 2px solid var(--ink); }
-      .scores-row .mom-meter-card { border-left: none; border-top: none; }
+      .scores-left { grid-template-columns: 1fr 1fr; }
+      .scores-left > * { padding: 20px; }
+      .scores-row .mom-meter-card { border-left: none; padding: 20px; }
 
       /* Content: stack and reorder — verdict, then synopsis, then streaming */
       .detail-cols {
@@ -843,7 +849,6 @@
         width: 100%;
         padding: 20px;
         order: 2;
-        border-top: 2px solid var(--ink);
       }
       .detail-sidebar {
         position: static !important;
