@@ -975,6 +975,51 @@
     }
     .fade-in-up.visible { opacity: 1; transform: translateY(0); }
 
+    /* Privacy modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(91,9,69,0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      max-width: 900px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 2.5rem;
+      position: relative;
+    }
+    .modal-close {
+      position: sticky;
+      top: 0;
+      float: right;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--ink);
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+    .modal-close:hover { background: var(--ink); color: var(--bg); }
+    .modal-box [data-custom-class='title'],
+    .modal-box [data-custom-class='heading_1'],
+    .modal-box [data-custom-class='heading_2'] { color: var(--ink) !important; }
+    .modal-box [data-custom-class='body_text'],
+    .modal-box [data-custom-class='subtitle'] { color: var(--text3) !important; }
+
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1078,7 +1123,7 @@
         <svg class="footer-heart" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>
         <div class="footer-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></div>
         <div class="footer-tagline">Made with <span class="serif">love</span>, for movie nights with <span class="serif">mom</span>.</div>
-        <div class="footer-credit">Data provided by TMDB</div>
+        <div class="footer-credit">Data provided by TMDB &nbsp;|&nbsp; <a href="#" onclick="openPrivacyModal();return false" style="color:inherit;text-decoration:underline;">Privacy Policy</a></div>
       </footer>
     </div>
   </div>
@@ -1207,7 +1252,7 @@
         <svg class="footer-heart" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>
         <div class="footer-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></div>
         <div class="footer-tagline">Made with <span class="serif">love</span>, for movie nights with <span class="serif">mom</span>.</div>
-        <div class="footer-credit">Data provided by TMDB</div>
+        <div class="footer-credit">Data provided by TMDB &nbsp;|&nbsp; <a href="#" onclick="openPrivacyModal();return false" style="color:inherit;text-decoration:underline;">Privacy Policy</a></div>
       </footer>
     </div>
   </div>
@@ -1811,6 +1856,39 @@
 
     // ── INIT ──
     buildPosterRows('movie-grid', 'tv-grid', 'any', 'both', 'any');
+  </script>
+
+  <!-- Privacy Policy Modal -->
+  <div class="modal-overlay" id="privacy-modal" onclick="closePrivacyModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closePrivacyModal()" aria-label="Close">&#10005;</button>
+      <div id="privacy-content">Loading...</div>
+    </div>
+  </div>
+  <script>
+    function openPrivacyModal() {
+      var modal = document.getElementById('privacy-modal');
+      var content = document.getElementById('privacy-content');
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (content.dataset.loaded) return;
+      fetch('/privacy-policy.html')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, 'text/html');
+          content.innerHTML = doc.body.innerHTML;
+          content.dataset.loaded = '1';
+        })
+        .catch(function() { content.innerHTML = '<p>Could not load privacy policy.</p>'; });
+    }
+    function closePrivacyModal() {
+      document.getElementById('privacy-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closePrivacyModal();
+    });
   </script>
 </body>
 </html>
