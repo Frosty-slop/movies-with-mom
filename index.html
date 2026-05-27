@@ -1878,6 +1878,13 @@
           var parser = new DOMParser();
           var doc = parser.parseFromString(html, 'text/html');
           content.innerHTML = doc.body.innerHTML;
+          content.querySelectorAll('.pii').forEach(function(el) {
+            el.textContent = atob(el.getAttribute('data-v'));
+          });
+          content.querySelectorAll('.pii-link').forEach(function(el) {
+            var email = atob(el.getAttribute('data-v'));
+            el.href = 'mailto:' + email;
+          });
           content.dataset.loaded = '1';
         })
         .catch(function() { content.innerHTML = '<p>Could not load privacy policy.</p>'; });
