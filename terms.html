@@ -9,110 +9,315 @@
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffe2e4" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1V5YWDCD1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Q1V5YWDCD1');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #ffe2e4;
-      color: #5b0945;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+
+    :root {
+      --ink:        #5b0945;
+      --ink-dark:   #3d052e;
+      --bg:         #ffe2e4;
+      --pink-light: #ffe2e4;
+      --serif:      'Young Serif', Georgia, serif;
+      --sans:       'Syne', 'DM Sans', system-ui, sans-serif;
     }
-    .site-header {
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .page-wrap { padding: 72px 120px 0; }
+    @media (max-width: 1400px) { .page-wrap { padding: 48px 40px 0; } }
+    @media (max-width: 900px)  { .page-wrap { padding: 32px 20px 0; } }
+
+    .page-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      border-top: 2px solid var(--ink);
+    }
+
+    .page-nav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      border-bottom: 1px solid #5b0945;
+      gap: 20px;
+      padding: 20px;
+      border-bottom: 2px solid var(--ink);
     }
-    .site-header a.logo {
-      font-size: 18px;
-      font-weight: 700;
-      color: #5b0945;
+    .back-btn {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
       text-decoration: none;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .back-btn svg { width: 10px; height: 20px; display: block; }
+    .back-btn:hover { background: var(--ink); color: var(--bg); }
+    .page-nav-title {
+      font-family: var(--sans);
+      font-size: 1.75rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
+      color: var(--ink);
+      padding-left: 14px;
     }
-    .site-header a.back {
-      font-size: 14px;
-      color: #5b0945;
-      text-decoration: underline;
+    .page-nav-title .serif { font-family: var(--serif); font-weight: 400; }
+    .tm { font-size: 0.35em; vertical-align: super; font-weight: 400; font-family: Helvetica, Arial, sans-serif; letter-spacing: 0; }
+
+    .page-hero {
+      padding: 44px 46px;
+      border-bottom: 2px solid var(--ink);
     }
-    .content {
-      max-width: 860px;
+    .page-eyebrow {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-family: var(--serif);
+      font-size: 4.5rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .page-subtitle {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+    }
+
+    .page-content {
+      padding: 40px 46px 70px;
+    }
+
+    .section-label {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .body-copy {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .body-copy p + p { margin-top: 16px; }
+    .body-copy a { color: var(--ink); font-weight: 600; }
+
+    .page-section {
+      padding-top: 32px;
+      margin-top: 32px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .site-footer-wrap { padding: 0 120px; }
+    @media (max-width: 1400px) { .site-footer-wrap { padding: 0 40px; } }
+    @media (max-width: 900px)  { .site-footer-wrap { padding: 0 20px; } }
+    .site-footer {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 40px 80px;
+      background: var(--ink);
+      color: var(--pink-light);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
     }
-    h1 {
-      font-size: 26px;
+    .footer-heart { width: 28px; height: 24px; color: var(--pink-light); margin-bottom: 20px; }
+    .footer-title {
+      font-family: var(--sans);
+      font-size: 4.5rem;
       font-weight: 700;
-      margin: 0 0 8px;
+      color: var(--pink-light);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
     }
-    .updated {
-      font-size: 14px;
-      color: #8a4070;
-      margin-bottom: 40px;
+    .footer-title .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+    .footer-tagline {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.8;
     }
-    h2 {
-      font-size: 17px;
-      font-weight: 700;
-      margin: 36px 0 10px;
+    .footer-tagline .serif { font-family: var(--serif); font-weight: 400; }
+    .footer-credit {
+      position: absolute;
+      bottom: 28px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.5;
     }
-    p, li {
-      font-size: 14px;
-      line-height: 1.7;
-      color: #595959;
-      margin: 0 0 10px;
+    .footer-credit a { color: inherit; text-decoration: underline; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 28px 20px; }
+      .page-title { font-size: 2.75rem; }
+      .page-content { padding: 24px 20px 48px; }
+      .site-footer { height: 300px; }
+      .footer-title { font-size: 2.75rem; }
     }
-    ul {
-      padding-left: 20px;
-      margin: 0 0 10px;
+
+    .terms-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
     }
-    a { color: #5b0945; }
-    @media (max-width: 600px) {
-      .site-header { padding: 16px 20px; }
-      .content { padding: 24px 20px 60px; }
+    .terms-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .terms-dot {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ink);
+      margin-top: 7px;
     }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <a class="logo" href="/">Movies with Mom&#8482;</a>
-    <a class="back" href="/">← Back to home</a>
-  </header>
-  <div class="content">
-    <h1>Terms of Service</h1>
-    <p class="updated">Last updated: July 7, 2026</p>
+  <div class="page-wrap">
+    <div class="page-inner">
+      <nav class="page-nav">
+        <a href="/" class="back-btn" aria-label="Back to home">
+          <svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <span class="page-nav-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></span>
+      </nav>
+      <div class="page-hero">
+        <div class="page-eyebrow">LEGAL</div>
+        <h1 class="page-title">Terms of Service.</h1>
+        <div class="page-subtitle">Last updated July 7, 2026. By using this site, you agree to these terms.</div>
+      </div>
+      <div class="page-content">
 
-    <p>Welcome to Movies with Mom ("we," "us," or "our"), available at <a href="https://movieswith.mom">movieswith.mom</a>. By using this website, you agree to the following terms. Please read them carefully.</p>
+        <div class="body-copy">
+          <p>Welcome to Movies with Mom, available at <a href="https://movieswith.mom">movieswith.mom</a>. Please read these terms carefully before using the site.</p>
+        </div>
 
-    <h2>1. Use of the site</h2>
-    <p>Movies with Mom is a free, personal-use tool designed to help people find family-friendly movies and TV shows to enjoy with loved ones. You may use this site for personal, non-commercial purposes only.</p>
+        <div class="page-section">
+          <span class="section-label">USE OF THE SITE</span>
+          <div class="body-copy">
+            <p>Movies with Mom is a free tool designed to help people find family-friendly movies and TV shows to enjoy with loved ones. You may use this site for personal, non-commercial purposes only.</p>
+          </div>
+        </div>
 
-    <h2>2. No warranties</h2>
-    <p>This site is provided "as is" without warranties of any kind. We make no guarantees about the accuracy, completeness, or suitability of any content recommendations. Movie ratings, availability, and streaming platforms are subject to change and are provided for informational purposes only.</p>
+        <div class="page-section">
+          <span class="section-label">NO WARRANTIES</span>
+          <div class="body-copy">
+            <p>This site is provided "as is" without warranties of any kind. We make no guarantees about the accuracy, completeness, or suitability of any content recommendations. Movie ratings, availability, and streaming platforms are subject to change and are provided for informational purposes only.</p>
+          </div>
+        </div>
 
-    <h2>3. Third-party content and services</h2>
-    <p>This site uses data from:</p>
-    <ul>
-      <li><strong>The Movie Database (TMDB)</strong> — for movie and TV show metadata, posters, and ratings. This product uses the TMDB API but is not endorsed or certified by TMDB.</li>
-      <li><strong>Anthropic Claude API</strong> — to generate AI-powered content suggestions and analysis. AI-generated content may occasionally be inaccurate.</li>
-      <li><strong>JustWatch</strong> — for streaming availability information.</li>
-    </ul>
-    <p>We are not responsible for the content or practices of these third-party services.</p>
+        <div class="page-section">
+          <span class="section-label">THIRD-PARTY CONTENT AND SERVICES</span>
+          <div class="body-copy">
+            <p>This site uses data from the following third-party services. We are not responsible for their content or practices.</p>
+          </div>
+          <ul class="terms-list" style="margin-top:16px;">
+            <li><span class="terms-dot"></span><span><strong>The Movie Database (TMDB)</strong> — movie and TV show metadata, posters, and ratings. This product uses the TMDB API but is not endorsed or certified by TMDB.</span></li>
+            <li><span class="terms-dot"></span><span><strong>Anthropic Claude API</strong> — AI-powered content suggestions and analysis. AI-generated content may occasionally be inaccurate.</span></li>
+            <li><span class="terms-dot"></span><span><strong>JustWatch</strong> — streaming availability information.</span></li>
+          </ul>
+        </div>
 
-    <h2>4. Intellectual property</h2>
-    <p>Movie posters, titles, and related media are the property of their respective studios and distributors. All other content on this site — including design, copy, and code — is owned by Movies with Mom.</p>
+        <div class="page-section">
+          <span class="section-label">AI-GENERATED CONTENT</span>
+          <div class="body-copy">
+            <p>Some content on this site (including "Before you press play" analysis and movie suggestions) is generated by AI. This content is provided for general guidance only and should not be relied on as a definitive content rating or parental advisory. Always use your own judgment when choosing what to watch.</p>
+          </div>
+        </div>
 
-    <h2>5. Limitation of liability</h2>
-    <p>To the fullest extent permitted by law, Movies with Mom shall not be liable for any indirect, incidental, or consequential damages arising from your use of this site.</p>
+        <div class="page-section">
+          <span class="section-label">INTELLECTUAL PROPERTY</span>
+          <div class="body-copy">
+            <p>Movie posters, titles, and related media are the property of their respective studios and distributors. All other content on this site; including design, copy, and code; is owned by Movies with Mom.</p>
+          </div>
+        </div>
 
-    <h2>6. AI-generated content</h2>
-    <p>Some content on this site (including "Before you press play" analysis and suggestions) is generated by AI. This content is provided for general guidance only and should not be relied on as a definitive content rating or parental advisory. Always use your own judgment when choosing what to watch.</p>
+        <div class="page-section">
+          <span class="section-label">LIMITATION OF LIABILITY</span>
+          <div class="body-copy">
+            <p>To the fullest extent permitted by law, Movies with Mom shall not be liable for any indirect, incidental, or consequential damages arising from your use of this site.</p>
+          </div>
+        </div>
 
-    <h2>7. Changes to these terms</h2>
-    <p>We may update these terms from time to time. Continued use of the site after changes are posted constitutes your acceptance of the updated terms.</p>
+        <div class="page-section">
+          <span class="section-label">CHANGES TO THESE TERMS</span>
+          <div class="body-copy">
+            <p>We may update these terms from time to time. Continued use of the site after changes are posted constitutes your acceptance of the updated terms.</p>
+          </div>
+        </div>
 
-    <h2>8. Contact</h2>
-    <p>Questions about these terms? Reach us at <a href="mailto:hello@movieswith.mom">hello@movieswith.mom</a>.</p>
+        <div class="page-section">
+          <span class="section-label">CONTACT</span>
+          <div class="body-copy">
+            <p>Questions about these terms? Reach us at <a href="mailto:hello@movieswith.mom">hello@movieswith.mom</a>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <svg class="footer-heart" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>
+      <div class="footer-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></div>
+      <div class="footer-tagline">Made with <span class="serif">love</span>, for movie nights with <span class="serif">mom</span>.</div>
+      <div class="footer-credit">Data provided by TMDB &nbsp;|&nbsp; <a href="/about">About</a> &nbsp;|&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;|&nbsp; <a href="/terms">Terms of Service</a></div>
+    </footer>
   </div>
 </body>
 </html>

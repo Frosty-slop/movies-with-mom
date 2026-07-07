@@ -9,51 +9,223 @@
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffe2e4" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1V5YWDCD1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Q1V5YWDCD1');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #ffe2e4;
-      color: #5b0945;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+
+    :root {
+      --ink:        #5b0945;
+      --ink-dark:   #3d052e;
+      --bg:         #ffe2e4;
+      --pink-light: #ffe2e4;
+      --serif:      'Young Serif', Georgia, serif;
+      --sans:       'Syne', 'DM Sans', system-ui, sans-serif;
     }
-    .site-header {
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .page-wrap { padding: 72px 120px 0; }
+    @media (max-width: 1400px) { .page-wrap { padding: 48px 40px 0; } }
+    @media (max-width: 900px)  { .page-wrap { padding: 32px 20px 0; } }
+
+    .page-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      border-top: 2px solid var(--ink);
+    }
+
+    .page-nav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      border-bottom: 1px solid #5b0945;
+      gap: 20px;
+      padding: 20px;
+      border-bottom: 2px solid var(--ink);
     }
-    .site-header a.logo {
-      font-size: 18px;
-      font-weight: 700;
-      color: #5b0945;
+    .back-btn {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
       text-decoration: none;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .back-btn svg { width: 10px; height: 20px; display: block; }
+    .back-btn:hover { background: var(--ink); color: var(--bg); }
+    .page-nav-title {
+      font-family: var(--sans);
+      font-size: 1.75rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
+      color: var(--ink);
+      padding-left: 14px;
     }
-    .site-header a.back {
-      font-size: 14px;
-      color: #5b0945;
-      text-decoration: underline;
+    .page-nav-title .serif { font-family: var(--serif); font-weight: 400; }
+    .tm { font-size: 0.35em; vertical-align: super; font-weight: 400; font-family: Helvetica, Arial, sans-serif; letter-spacing: 0; }
+
+    .page-hero {
+      padding: 44px 46px;
+      border-bottom: 2px solid var(--ink);
     }
-    .content {
-      max-width: 860px;
+    .page-eyebrow {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-family: var(--serif);
+      font-size: 4.5rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .page-subtitle {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+    }
+
+    .page-content {
+      padding: 40px 46px 70px;
+    }
+
+    .section-label {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .body-copy {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .body-copy p + p { margin-top: 16px; }
+    .body-copy a { color: var(--ink); font-weight: 600; }
+
+    .page-section {
+      padding-top: 32px;
+      margin-top: 32px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .site-footer-wrap { padding: 0 120px; }
+    @media (max-width: 1400px) { .site-footer-wrap { padding: 0 40px; } }
+    @media (max-width: 900px)  { .site-footer-wrap { padding: 0 20px; } }
+    .site-footer {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 40px 80px;
+      background: var(--ink);
+      color: var(--pink-light);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
     }
-    @media (max-width: 600px) {
-      .site-header { padding: 16px 20px; }
-      .content { padding: 24px 20px 60px; }
+    .footer-heart { width: 28px; height: 24px; color: var(--pink-light); margin-bottom: 20px; }
+    .footer-title {
+      font-family: var(--sans);
+      font-size: 4.5rem;
+      font-weight: 700;
+      color: var(--pink-light);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
     }
+    .footer-title .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+    .footer-tagline {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.8;
+    }
+    .footer-tagline .serif { font-family: var(--serif); font-weight: 400; }
+    .footer-credit {
+      position: absolute;
+      bottom: 28px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.5;
+    }
+    .footer-credit a { color: inherit; text-decoration: underline; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 28px 20px; }
+      .page-title { font-size: 2.75rem; }
+      .page-content { padding: 24px 20px 48px; }
+      .site-footer { height: 300px; }
+      .footer-title { font-size: 2.75rem; }
+    }
+
+    /* Override Termly's default colors to match site palette */
+    [data-custom-class='title'], [data-custom-class='title'] * { color: var(--ink) !important; font-family: var(--serif) !important; font-size: 1rem !important; font-weight: 400 !important; }
+    [data-custom-class='subtitle'], [data-custom-class='subtitle'] * { color: var(--ink) !important; opacity: 0.6; font-family: var(--sans) !important; font-size: 0.875rem !important; }
+    [data-custom-class='heading_1'], [data-custom-class='heading_1'] * { color: var(--ink) !important; font-family: var(--sans) !important; font-size: 0.875rem !important; font-weight: 600 !important; letter-spacing: 0.05em; text-transform: uppercase; }
+    [data-custom-class='heading_2'], [data-custom-class='heading_2'] * { color: var(--ink) !important; font-family: var(--sans) !important; font-size: 0.875rem !important; font-weight: 600 !important; }
+    [data-custom-class='body_text'], [data-custom-class='body_text'] * { color: var(--ink) !important; font-family: var(--sans) !important; font-size: 0.9375rem !important; line-height: 1.6 !important; }
+    [data-custom-class='link'], [data-custom-class='link'] * { color: var(--ink) !important; font-weight: 600 !important; }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <a class="logo" href="/">Movies with Mom&#8482;</a>
-    <a class="back" href="/">← Back to home</a>
-  </header>
-  <div class="content">
-    <style>
+  <div class="page-wrap">
+    <div class="page-inner">
+      <nav class="page-nav">
+        <a href="/" class="back-btn" aria-label="Back to home">
+          <svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <span class="page-nav-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></span>
+      </nav>
+      <div class="page-hero">
+        <div class="page-eyebrow">LEGAL</div>
+        <h1 class="page-title">Privacy Policy.</h1>
+        <div class="page-subtitle">How we collect, use, and protect your information.</div>
+      </div>
+      <div class="page-content">
+        <style>
   [data-custom-class='body'], [data-custom-class='body'] * {
           background: transparent !important;
         }
@@ -116,6 +288,16 @@ document.querySelectorAll('.pii-link').forEach(function(el) {
   el.href = 'mailto:' + email;
 });
 </script>
+      </div>
+    </div>
+  </div>
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <svg class="footer-heart" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>
+      <div class="footer-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></div>
+      <div class="footer-tagline">Made with <span class="serif">love</span>, for movie nights with <span class="serif">mom</span>.</div>
+      <div class="footer-credit">Data provided by TMDB &nbsp;|&nbsp; <a href="/about">About</a> &nbsp;|&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;|&nbsp; <a href="/terms">Terms of Service</a></div>
+    </footer>
   </div>
 </body>
 </html>
