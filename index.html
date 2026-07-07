@@ -36,6 +36,41 @@
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <meta name="theme-color" content="#ffe2e4" />
+
+  <!-- Organization schema (global) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Movies with Mom",
+    "url": "https://movieswith.mom",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://movieswith.mom/web-app-manifest-512x512.png",
+      "width": 512,
+      "height": 512
+    },
+    "description": "Your mom-safe cinema guide. Skip the cringe, keep the popcorn. Handpicked movies and TV shows perfect for watching with mom."
+  }
+  </script>
+
+  <!-- WebSite schema with SearchAction (sitelinks search box) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Movies with Mom",
+    "url": "https://movieswith.mom",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://movieswith.mom/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -1754,6 +1789,48 @@
       document.getElementById('detail-loading').classList.add('hidden');
       document.getElementById('detail-content').classList.add('visible');
 
+      // ── STRUCTURED DATA (schema.org) ──
+      (function injectMovieSchema(d) {
+        var type = d.media_type === 'tv' ? 'TVSeries' : 'Movie';
+        var schema = {
+          '@context': 'https://schema.org',
+          '@type': type,
+          'name': d.title,
+          'description': d.synopsis || undefined,
+          'genre': d.genre || undefined,
+          'image': d.poster || undefined,
+          'datePublished': (d.year || '').split(/[–\-]/)[0] || undefined,
+          'url': 'https://movieswith.mom/',
+        };
+        if (d.vote_average && d.vote_count) {
+          schema['aggregateRating'] = {
+            '@type': 'AggregateRating',
+            'ratingValue': parseFloat(d.vote_average),
+            'bestRating': 10,
+            'worstRating': 1,
+            'ratingCount': d.vote_count,
+          };
+        }
+        var heuristic = momMeterHeuristic(d.rating, d.genre);
+        schema['review'] = {
+          '@type': 'Review',
+          'author': { '@type': 'Organization', 'name': 'Movies with Mom' },
+          'reviewRating': {
+            '@type': 'Rating',
+            'ratingValue': heuristic.stars,
+            'bestRating': 5,
+            'worstRating': 1,
+          },
+          'reviewBody': heuristic.verdict,
+          'description': 'Mom-safety rating: ' + heuristic.stars + '/5 hearts. ' + heuristic.verdict,
+        };
+        var tag = document.getElementById('ld-movie') || document.createElement('script');
+        tag.id = 'ld-movie';
+        tag.type = 'application/ld+json';
+        tag.textContent = JSON.stringify(schema);
+        if (!tag.parentNode) document.head.appendChild(tag);
+      })(d);
+
       function tryLoadAnalysis(retries) {
         callAI({ task:'analyze', title:d.title, synopsis:d.synopsis, rating:d.rating, genre:d.genre, cast:d.cast })
           .then(function(raw) {
@@ -1811,6 +1888,12 @@
 
     // ── INIT ──
     buildPosterRows('movie-grid', 'tv-grid', 'any', 'both', 'any');
+
+    // Handle ?q= URL param (supports WebSite SearchAction / sitelinks search box)
+    (function() {
+      var q = new URLSearchParams(location.search).get('q');
+      if (q) openDetailByTitle(q.trim());
+    })();
   </script>
 
 </body>
