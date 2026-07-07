@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Movies with Mom</title>
+  <meta name="description" content="Movies with Mom helps you find the perfect film for movie night — no awkward scenes, no cringe moments, just great watching with mom." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About — Movies with Mom" />
+  <meta property="og:description" content="Movies with Mom helps you find the perfect film for movie night — no awkward scenes, no cringe moments, just great watching with mom." />
+  <meta property="og:url" content="https://movieswith.mom/about" />
+  <meta property="og:site_name" content="Movies with Mom" />
+  <meta property="og:image" content="https://movieswith.mom/web-app-manifest-512x512.png" />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1V5YWDCD1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Q1V5YWDCD1');
+  </script>
+
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffe2e4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+
+    :root {
+      --ink:        #5b0945;
+      --ink-dark:   #3d052e;
+      --bg:         #ffe2e4;
+      --bg2:        #f5cdd0;
+      --text3:      #8a4f6b;
+      --border:     rgba(91,9,69,0.20);
+      --pink-light: #ffe2e4;
+      --serif:      'Young Serif', Georgia, serif;
+      --sans:       'Syne', 'DM Sans', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── OUTER WRAP ── mirrors .detail-wrap */
+    .page-wrap {
+      padding: 72px 120px 0;
+    }
+    @media (max-width: 1400px) { .page-wrap { padding: 48px 40px 0; } }
+    @media (max-width: 900px)  { .page-wrap { padding: 32px 20px 0; } }
+
+    /* ── INNER FRAME ── mirrors .detail-inner */
+    .page-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      border-top: 2px solid var(--ink);
+    }
+
+    /* ── NAV ── mirrors .detail-nav */
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .back-btn {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .back-btn svg { width: 10px; height: 20px; display: block; }
+    .back-btn:hover { background: var(--ink); color: var(--bg); }
+    .page-nav-title {
+      font-family: var(--sans);
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      padding-left: 14px;
+    }
+    .page-nav-title .serif { font-family: var(--serif); font-weight: 400; }
+    .tm { font-size: 0.35em; vertical-align: super; font-weight: 400; font-family: Helvetica, Arial, sans-serif; letter-spacing: 0; text-decoration: none; }
+
+    /* ── HERO INFO BLOCK ── mirrors .detail-info */
+    .about-hero {
+      padding: 44px 46px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .about-eyebrow {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .about-title {
+      font-family: var(--serif);
+      font-size: 4.5rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .about-subtitle {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+    }
+
+    /* ── TWO-COLUMN BODY ── mirrors .detail-cols */
+    .about-cols {
+      position: relative;
+    }
+    .about-main {
+      width: 66.6667%;
+      padding: 32px 46px 70px;
+      box-sizing: border-box;
+    }
+    .about-sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 33.3333%;
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid var(--ink);
+      box-sizing: border-box;
+    }
+
+    /* ── SECTION LABELS ── mirrors .detail-section-label */
+    .section-label {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    /* ── BODY COPY ── mirrors .detail-synopsis */
+    .body-copy {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .body-copy p + p { margin-top: 16px; }
+
+    /* ── SECTION DIVIDER ── mirrors .racy-section */
+    .about-section {
+      padding: 32px 0 0;
+      margin: 32px -46px 0;
+      border-top: 2px solid var(--ink);
+      padding-left: 46px;
+      padding-right: 46px;
+    }
+
+    /* ── SIDEBAR CARDS ── mirrors .sidebar-card */
+    .sidebar-card {
+      padding: 24px 46px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .sidebar-card:last-child { border-bottom: none; }
+    .sidebar-card .section-label { margin-bottom: 12px; }
+
+    .contact-detail {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    .contact-detail a {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .contact-detail a:hover { opacity: 0.7; }
+    .contact-detail + .contact-detail { margin-top: 14px; }
+
+    .how-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .how-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .how-dot {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ink);
+      margin-top: 6px;
+    }
+
+    /* ── FOOTER ── same as site */
+    .site-footer-wrap { padding: 0 120px; }
+    @media (max-width: 1400px) { .site-footer-wrap { padding: 0 40px; } }
+    @media (max-width: 900px)  { .site-footer-wrap { padding: 0 20px; } }
+    .site-footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--ink);
+      color: var(--pink-light);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+    .footer-heart { width: 28px; height: 24px; color: var(--pink-light); margin-bottom: 20px; }
+    .footer-title {
+      font-family: var(--sans);
+      font-size: 4.5rem;
+      font-weight: 700;
+      color: var(--pink-light);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
+    }
+    .footer-title .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+    .footer-tagline {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.8;
+    }
+    .footer-tagline .serif { font-family: var(--serif); font-weight: 400; }
+    .footer-credit {
+      position: absolute;
+      bottom: 28px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--pink-light);
+      opacity: 0.5;
+    }
+    .footer-credit a { color: inherit; text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .about-hero { padding: 28px 20px; }
+      .about-title { font-size: 2.75rem; }
+      .about-main {
+        width: 100%;
+        padding: 24px 20px 40px;
+      }
+      .about-sidebar {
+        position: static;
+        width: 100%;
+        border-left: none;
+        border-top: 2px solid var(--ink);
+      }
+      .about-section { margin: 24px -20px 0; padding-left: 20px; padding-right: 20px; }
+      .sidebar-card { padding: 24px 20px; }
+      .site-footer { height: 300px; }
+      .footer-title { font-size: 2.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+    <div class="page-inner">
+
+      <!-- Nav -->
+      <nav class="page-nav">
+        <a href="/" class="back-btn" aria-label="Back to home">
+          <svg viewBox="0 0 13.5 23.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.75 21.75L1.75 11.75L11.75 1.75" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <span class="page-nav-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></span>
+      </nav>
+
+      <!-- Hero -->
+      <div class="about-hero">
+        <div class="about-eyebrow">ABOUT THIS SITE</div>
+        <h1 class="about-title">Made for movie night.</h1>
+        <div class="about-subtitle">No awkward scenes. No cringe moments. Just great films to watch with mom.</div>
+      </div>
+
+      <!-- Body -->
+      <div class="about-cols">
+
+        <!-- Main column -->
+        <div class="about-main">
+          <span class="section-label">THE MISSION</span>
+          <div class="body-copy">
+            <p>You know the feeling. You're watching a movie with your mom and suddenly there's a scene that has everyone reaching for their phones. Maybe it's an unexpected sex scene. Maybe it's graphic violence that comes out of nowhere. Maybe it's crude humor that makes the room go quiet.</p>
+            <p>Movies with Mom exists to fix that. We review films and TV shows specifically for the mother-child viewing experience — flagging the moments that make things awkward so you can make an informed choice before you press play.</p>
+            <p>It's not about avoiding anything challenging or edgy. Good stories explore difficult territory. It's about having the information up front so you can decide what's right for your movie night — and walk in prepared.</p>
+          </div>
+
+          <div class="about-section">
+            <span class="section-label">HOW IT WORKS</span>
+            <ul class="how-list">
+              <li><span class="how-dot"></span><span>Search any movie or TV show from the homepage to pull up details, ratings, and a mom-friendliness analysis.</span></li>
+              <li><span class="how-dot"></span><span>The <strong>Mom Meter</strong> gives a quick 1–5 heart rating for how comfortable the viewing experience is likely to be.</span></li>
+              <li><span class="how-dot"></span><span><strong>Before You Press Play</strong> flags specific content concerns — violence, language, nudity, awkward humor — with plain-language descriptions.</span></li>
+              <li><span class="how-dot"></span><span>Use <strong>Mom Safe Search</strong> to get AI-powered recommendations filtered by mood, era, and type — all vetted for the mom-friendly experience.</span></li>
+            </ul>
+          </div>
+
+          <div class="about-section">
+            <span class="section-label">THE FINE PRINT</span>
+            <div class="body-copy">
+              <p>Content analysis is generated by AI and is meant as a helpful guide, not a definitive rating system. Movie data is provided by <a href="https://www.themoviedb.org" style="color:inherit;font-weight:600;">The Movie Database (TMDB)</a>. Streaming availability is sourced from JustWatch. We are not affiliated with any studio or streaming service.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="about-sidebar">
+          <div class="sidebar-card">
+            <span class="section-label">WHO RUNS THIS</span>
+            <div class="contact-detail">
+              Built and maintained by a designer and developer who just wanted a better way to find movies to watch with his mom.
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <span class="section-label">GET IN TOUCH</span>
+            <div class="contact-detail">
+              Have a suggestion, found a bug, or just want to say hi?
+            </div>
+            <div class="contact-detail">
+              <a href="mailto:hello@movieswith.mom">hello@movieswith.mom</a>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <span class="section-label">FIND US</span>
+            <div class="contact-detail">
+              <a href="https://movieswith.mom" style="color:inherit;font-weight:600;">movieswith.mom</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="site-footer-wrap">
+    <footer class="site-footer">
+      <svg class="footer-heart" viewBox="0 0 39 33" xmlns="http://www.w3.org/2000/svg"><path d="M33.5026 0H21.8699V5.41289H17.125V0H5.49745V5.41289H0V16.8694H5.49745V22.2848H10.9924V27.7002H16.4235V33H22.5561V27.7002H28.0051V22.2848H33.5026V16.8694H39V5.41289H33.5026V0Z" fill="currentColor"/></svg>
+      <div class="footer-title"><span class="serif">Movies</span> with <span class="serif">Mom</span><span class="tm">™</span></div>
+      <div class="footer-tagline">Made with <span class="serif">love</span>, for movie nights with <span class="serif">mom</span>.</div>
+      <div class="footer-credit">Data provided by TMDB &nbsp;|&nbsp; <a href="/privacy">Privacy Policy</a> &nbsp;|&nbsp; <a href="/terms">Terms of Service</a></div>
+    </footer>
+  </div>
+
+</body>
+</html>
